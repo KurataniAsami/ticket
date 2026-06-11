@@ -13,23 +13,19 @@ datasource db {
 
 model Event {
   id            Int     @id @default(autoincrement())
-  eventTitele   String?
+  title         String?
   artist        String?
   eventDate     DateTime
   ticketImage   String?
   note          String?
   memoryImage   String?
+
+  placeId       Int
+  places        Place     @relation(fields: [placeId], references: [id])
 }
 
 model Place {
-  id      Int @default(autoincrement())
+  id      Int           @id @default(autoincrement())
   name    String?
-
-}
-
-model EventPlace {
-  id    Int   @id @default(autoincrement())
-  EventId   Int
-  placeId   Int
-  
+  events  Event[]
 }
