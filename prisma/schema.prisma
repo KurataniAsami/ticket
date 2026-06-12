@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -21,11 +16,35 @@ model Event {
   memoryImage   String?
 
   placeId       Int
-  places        Place     @relation(fields: [placeId], references: [id])
+  place        Place     @relation(fields: [placeId], references: [id])
 }
 
 model Place {
   id      Int           @id @default(autoincrement())
   name    String?
   events  Event[]
+}
+
+
+// 別のプロジェクトのテーブル
+model Pokemon {
+  id      Int           @id @default(autoincrement())
+  name    String
+  weight  Int
+  detail  String @default("")
+  types   PokemonType[]
+}
+
+model Type {
+  id        Int           @id @default(autoincrement())
+  name      String
+  pokemons  PokemonType[]
+}
+
+model PokemonType {
+  id          Int     @id @default(autoincrement())
+  pokemonId   Int
+  typeId      Int     @map("type_id")
+  pokemon     Pokemon @relation(fields: [pokemonId], references: [id], onDelete: Cascade)
+  type        Type    @relation(fields: [typeId], references: [id], onDelete: Cascade)
 }
