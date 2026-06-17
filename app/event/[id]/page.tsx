@@ -54,12 +54,20 @@ export default function EventDetailPage() {
         
       <div className="flex justify-center">
         <div className="flex-col">
+          {/* import ArticleIcon from '@mui/icons-material/Article'; */}
           <p className="text-xl">{event.title}</p>
+          {/* import MicIcon from '@mui/icons-material/Mic'; */}
+          {/* import MusicNoteIcon from '@mui/icons-material/MusicNote'; */} ♪
           <p className="text-xl">{event.artist}</p>
+          {/* import FestivalIcon from '@mui/icons-material/Festival'; */}
           <p className="text-xl">{event.place.name}</p>
+
+          <p className="text-xl">{event.note}</p>
         </div>
       </div>
       
     </div>
   )
 }
+// 画像添付　import CameraAltIcon from '@mui/icons-material/CameraAlt';
+// note import ModeEditIcon from '@mui/icons-material/ModeEdit';
