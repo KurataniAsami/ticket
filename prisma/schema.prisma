@@ -9,11 +9,15 @@ datasource db {
 model Event {
   id            Int     @id @default(autoincrement())
   title         String?
-  artist        String?
+  artist        String
+  artistImage   String?   // アーティストは必須項目だが、artist登録時には画像が存在しないから?にする
   eventDate     DateTime
   ticketImage   String?
   note          String?
-  memoryImage   String?
+  songList      String?
+
+  // 画像が0件でも空配列になるからオプショナルにしなくてもいい
+  memoryImage   String[]
 
   placeId       Int
   place        Place     @relation(fields: [placeId], references: [id])
