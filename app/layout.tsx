@@ -1,5 +1,10 @@
-import Link from "next/link";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+import Sidebar from "./components/Sidebar";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+
 
 export default function RootLayout({
   children,
@@ -7,14 +12,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja">
-      <body className="">
-        <div className="flex justify-center gap-5 bg-gray-200 py-3">
-          <Link href={"./"}>全て</Link>  
-          <Link href={"./"}>アーティスト / 会場別</Link>  
-          <Link href={"./"}>カレンダー</Link>  
-        </div>      
-        {children}
+    <html lang="ja" className={cn("font-sans", geist.variable)}>
+      <body className="flex min-h-screen">
+        <Sidebar />
+        <main className="flex-1">
+          {children}
+        </main>
       </body>
     </html>
   );
