@@ -15,12 +15,24 @@ model Event {
   ticketImage   String?
   note          String?
   songList      String?
+  rating        Int?   // レビュー
 
   // 画像が0件でも空配列になるからオプショナルにしなくてもいい
-  memoryImage   String[]
+  // memoryImage   String[]
 
   placeId       Int
-  place        Place     @relation(fields: [placeId], references: [id])
+  place         Place     @relation(fields: [placeId], references: [id])
+
+  eventImages    EventImage[]
+}
+
+model EventImage {
+  id            Int     @id @default(autoincrement())
+  url           String      // 存在するならurlは必ず持つ必要があるので?にしない
+  comment       String?
+
+  eventId       Int
+  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model Place {
