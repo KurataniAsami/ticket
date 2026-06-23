@@ -11,6 +11,8 @@ export default function Home() {
 
   useEffect(() => {
     const getAllEvent = async () => {
+      // 3件表示して、「続きを見る」を押したら10件ずつ追加する場合
+      // /api/event?limit=3&offset10
       const res = await fetch(`/api/event`)
       const data = await res.json() as EventIndexResponse
       setEvents(data.events)
