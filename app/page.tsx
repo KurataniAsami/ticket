@@ -1,9 +1,11 @@
 'use client'
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { EventList } from "./types/event";
 import { EventIndexResponse } from "./types/event";
 import EventItempage from "./components/EventItem";
+import AddIcon from '@mui/icons-material/Add';
 
 export default function Home() {
   const [events, setEvents] = useState<EventList[]>([])
@@ -27,12 +29,25 @@ export default function Home() {
 
   return (
     <div>
-      {events.map((event) => (
-        <EventItempage
-          key={event.id}
-          event={event}
-        />
-      ))}
+      <div className="flex justify-end mr-5 mt-5">
+        <Link
+          href={`/event/new`}
+          className="flex items-center text-gray-800 bg-pink-400 rounded-xl px-5 py-2 hover:bg-pink-500"  
+        >
+          <AddIcon className="w-5 h-5"/>
+          新規ライブを追加
+        </Link>
+      </div>
+
+      <div className="flex">
+        <p className="text-2xl mt-5 ml-5">最近参戦したライブ</p>
+        {events.map((event) => (
+          <EventItempage
+            key={event.id}
+            event={event}
+          />
+        ))}
+      </div>
     </div>
   );
 }
