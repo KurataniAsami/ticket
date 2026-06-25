@@ -21,9 +21,9 @@ export const GET = async (
       },
       include: {
         place: true,
+        eventImages: true
       }
     })
-
     if(!event) {
       return NextResponse.json(
         { message: 'イベントが見つかりません'},
