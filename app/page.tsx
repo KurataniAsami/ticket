@@ -39,8 +39,11 @@ export default function Home() {
         </Link>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-col">
         <p className="text-2xl mt-5 ml-5">最近参戦したライブ</p>
+      </div>
+
+      <div className="flex flex-wrap">
         {events.map((event) => (
           <EventItempage
             key={event.id}
