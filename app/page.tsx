@@ -1,9 +1,8 @@
 'use client'
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { EventList } from "./types/event";
-import { EventIndexResponse } from "./types/event";
 import EventItempage from "./components/EventItem";
 import AddIcon from '@mui/icons-material/Add';
 
@@ -16,7 +15,7 @@ export default function Home() {
       // 3件表示して、「続きを見る」を押したら10件ずつ追加する場合
       // /api/event?limit=3&offset10
       const res = await fetch(`/api/event`)
-      const data = await res.json() as EventIndexResponse
+      const data = await res.json()
       setEvents(data.events)
       setLoading(false)
     }
