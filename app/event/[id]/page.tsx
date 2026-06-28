@@ -52,7 +52,6 @@ export default function EventDetailPage() {
       try {
         const response = await fetch(`/api/spotify/artist?artist=${event.artist}`)
         const data = await response.json()
-        console.log("spotify data", data)
         setArtist(data)
       } catch(error) {
         setError(true)
@@ -71,14 +70,17 @@ export default function EventDetailPage() {
   return (
     <div>
       <div className="flex justify-center items-center gap-5 mt-5 mb-3 pb-3">
-        {event.ticketImage && (
-          <Image
-            src={event.ticketImage}
-            alt="チケット画像"
-            width={160}
-            height={160}
-          />
-        )}
+        {/* <EventImageCard/> 思い出画像これから */} 
+        <div>
+          {/* {event.ticketImageKey && (
+            <Image
+              src={event.ticketImageKey}
+              alt="チケット画像"
+              width={40}
+              height={20}
+            />
+            )} */}
+        </div>
       </div>
 
       <div className="flex flex-col">

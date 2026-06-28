@@ -16,6 +16,7 @@ export type CreateEventRequestBody = {
   note?: string
   songList?: string
   comment?: string[]
+  ticketImageKey?: string
 }
 
 export const GET = async () => {
@@ -44,30 +45,39 @@ export const POST = async (request: NextRequest) => {
   try {
     const body : CreateEventRequestBody = await request.json()
 
-    const { eventTitle, artist, place, eventDate, rating, note, songList } = body
+    const { eventTitle, artist, place, eventDate, rating, note, songList, ticketImageKey } = body
 
-    // 同じplaceがなければ作成、テストする
-    const placeData = await prisma.place.findFirst({
+    // 同じplaceがなければ作成(同一の会場でもレコードが重複しないようにする)
+    let placeData = await prisma.place.findFirst({
       where: {
         name: place,
       },
     })
 
+    if(!placeData) {
+      placeData = await prisma.place.create({
+        data: {
+          name: place,
+        }
+      })
+    }
+
+    if(!placeData) {
+      throw new Error("会場が存在しません")
+    }
+
     const eventData = await prisma.event.create({
       data: {
-        EventTitle: eventTitle ?? "",
+        eventTitle: eventTitle,
         artist: artist.join(" / "),  //　配列
         eventDate: new Date(eventDate),
-        rating: rating ?? 0,
-        note: note ?? "",
-        songList: songList ?? "",
-        // オプショナルの部分の表記があってるか確認
-        placeId: placeData.id
+        rating: rating,
+        note: note,
+        songList: songList,
+        placeId: placeData.id,
+        ticketImageKey: ticketImageKey
       },
     })
-
-    
-  
     return NextResponse.json({
       id: eventData.id
     })

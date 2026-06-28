@@ -8,11 +8,11 @@ datasource db {
 
 model Event {
   id            Int     @id @default(autoincrement())
-  EventTitle         String?
+  eventTitle    String?
   artist        String
   artistImage   String?   // アーティストは必須項目だが、artist登録時には画像が存在しないから?にする
   eventDate     DateTime
-  ticketImage   String?
+  ticketImageKey   String?
   note          String?
   songList      String?
   rating        Int?   // レビュー
@@ -37,7 +37,7 @@ model EventImage {
 
 model Place {
   id      Int           @id @default(autoincrement())
-  name    String?
+  name    String
   events  Event[]
 }
 

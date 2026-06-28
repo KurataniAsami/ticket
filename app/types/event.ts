@@ -1,10 +1,10 @@
 // 一覧表示の型
 export type EventList = {
   id: number
-  title?: string
+  eventTitle?: string
   artist?: string[]
   eventDate: string       // フロントで使うからstring
-  ticketImage?: string
+  ticketImageKey?: string
     place: {
       id: number
       name: string
@@ -22,7 +22,7 @@ export type EventDetail = {
   eventTitle?: string
   artist?: string[]
   eventDate: string       
-  ticketImage?: string
+  ticketImageKey?: string
   note?:         string
   songList?: string
   rating?: number
