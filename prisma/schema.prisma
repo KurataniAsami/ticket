@@ -9,7 +9,7 @@ datasource db {
 model Event {
   id            Int     @id @default(autoincrement())
   eventTitle    String?
-  artist        String
+  artist        String[]
   artistImage   String?   // アーティストは必須項目だが、artist登録時には画像が存在しないから?にする
   eventDate     DateTime
   ticketImageKey   String?

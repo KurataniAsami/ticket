@@ -69,7 +69,7 @@ export const POST = async (request: NextRequest) => {
     const eventData = await prisma.event.create({
       data: {
         eventTitle: eventTitle,
-        artist: artist.join(" / "),  //　配列
+        artist: artist,  //　配列
         eventDate: new Date(eventDate),
         rating: rating,
         note: note,

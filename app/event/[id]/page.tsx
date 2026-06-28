@@ -23,7 +23,7 @@ export default function EventDetailPage() {
   const params = useParams()
 
   const [event, setEvent] = useState<EventDetail | null>(null)
-  const [artist, setArtist] = useState<SpotifyArtist | null>(null)
+  const [artist, setArtist] = useState<SpotifyArtist[]>([])
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(false);
 
@@ -49,16 +49,24 @@ export default function EventDetailPage() {
     if(!event?.artist) return  // 意味
 
     const getArtistImage = async () => {
-      try {
-        const response = await fetch(`/api/spotify/artist?artist=${event.artist}`)
-        const data = await response.json()
-        setArtist(data)
-      } catch(error) {
-        setError(true)
-      } finally {
-        setLoading(false)
-      }
+    try {
+      const artists = await Promise.all(
+        event.artist.map(async (artistName) => {
+          const response = await fetch(
+            `/api/spotify/artist?artist=${encodeURIComponent(artistName)}`
+          )
+
+          return response.json()
+        })
+      )
+
+      setArtist(artists)
+    } catch (error) {
+      setError(true)
+    } finally {
+      setLoading(false)
     }
+  }
 
     getArtistImage()
   },[event])
@@ -85,7 +93,7 @@ export default function EventDetailPage() {
 
       <div className="flex flex-col">
 
-        {/* 1段目、タイトル */}
+        {/* 1段目、タイトルと５段階評価 */}
         <div className="flex justify-center mb-2">
           <div className="flex w-[500px]">
             <div className="w-[300px] flex items-center gap-1">
@@ -99,7 +107,7 @@ export default function EventDetailPage() {
           </div>
         </div>
 
-        {/* 2段目、日付 */}
+        {/* 2段目、日付と場所 */}
         <div className="flex justify-center">
           <div className="flex w-[500px]">
             <div className="w-[300px] flex items-center gap-1 text-gray-300">
@@ -124,27 +132,39 @@ export default function EventDetailPage() {
           </div>
         </div>
 
-        {/* 4段目、 アーティスト画像 */}
+        {/* 4段目、 アーティスト名 */}
         <div className="flex justify-center mt-4">
-          <div className="flex w-[500px] gap-5">
-            {artist?.imageUrl && (
-              <Image
-                src={artist.imageUrl}
-                alt={artist.name}
-                width={60}
-                height={60}
-                className="rounded-full"
-              />
-            )}
-            <div className="flex gap-2 items-center">
-              <p className="text-xl">{event.artist}</p>
+          <div className="flex flex-col w-[500px] gap-5">
+            <div className="flex flex-col gap-1">
+              {event.artist.map((artistName) => (
+                <p key={artistName} className="text-xl">
+                  {artistName}
+                </p>
+              ))}
+            </div>
+
+            {/* 5段目、 アーティスト画像 */}
+            <div className="flex gap-3">
+              {artist.map((artistData) => (
+                <div key={artistData.spotifyUrl}>
+                  {artistData.imageUrl && (
+                    <Image
+                      src={artistData.imageUrl}
+                      alt={artistData.name}
+                      width={100}
+                      height={100}
+                      className="rounded-full"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
       <div className="flex justify-center flex-col items-center mb-7">
-        <div className="items-center w-120 my-4">
+        <div className="items-center w-120 my-5">
           <div className="flex gap-2">
             <CreateIcon/>
             <p className="w-30 mb-2">メモ</p>

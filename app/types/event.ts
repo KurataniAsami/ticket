@@ -2,7 +2,7 @@
 export type EventList = {
   id: number
   eventTitle?: string
-  artist?: string[]
+  artist: string[]
   eventDate: string       // フロントで使うからstring
   ticketImageKey?: string
     place: {
@@ -20,7 +20,7 @@ export type EventIndexResponse = {
 export type EventDetail = {
   id: number
   eventTitle?: string
-  artist?: string[]
+  artist: string[]
   eventDate: string       
   ticketImageKey?: string
   note?:         string

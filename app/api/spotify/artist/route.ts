@@ -37,7 +37,7 @@ export const GET = async (request: NextRequest) => {
   const searchResponse = await fetch(
     `https://api.spotify.com/v1/search?q=${encodeURIComponent(
       artist
-    )}&type=artist&limit=1`,
+    )}&type=artist&limit=3`,
     {
       headers: {
         Authorization: `Bearer ${tokenData.access_token}`,
