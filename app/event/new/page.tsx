@@ -11,13 +11,15 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import TicketImage from "@/app/components/TicketImage"
 
+import AddIcon from '@mui/icons-material/Add';
+
 export default function EventCreatePage() {
   const router = useRouter()
 
   const [eventTitle, setEventTitle] = useState('')
 
-  const [artist, setArtist] = useState<string[]>([])  // 配列なので<string[]>
-  const [artistInput, setArtistInput] = useState("")  // inputに入力する値を保持
+  const [artist, setArtist] = useState<string[]>([""])  // 配列なので<string[]>
+  const [artistInput, setArtistInput] = useState<string[]>([""])  // inputに入力する値を保持
 
   const [place, setPlace] = useState<string>('')
   const [eventDate, setEventDate] = useState('')
@@ -113,25 +115,27 @@ export default function EventCreatePage() {
     fetcher()
   },[ticketImageKey])
 
+  // アーティスト追加
+  const addArtistField = () => {
+    if (artist.length >= 3) return
+    setArtist((prev) => [...prev, ""])
+  }
+
   return (
     <div className="mt-5">
       <p className="text-xl text-center">ライブ記録を追加</p>
 
       <div className="flex justify-center mt-3">
         <form onSubmit={handleSubmit}>
-        
-        <TicketImage url={ticketImageUrl ?? ""} />
-
           <div className="flex flex-col">
             <label className="text-gray-400 text-sm mb-1">
               日時<span className="text-red-500 ml-1">(必須)</span>
             </label>
-{/* カレンダーの色を訂正 */}
             <input
               type="date"   // dateにすると自動的にカレンダーを表示してくれる
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
-              className="border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
+              className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
           </div>
 
@@ -139,13 +143,33 @@ export default function EventCreatePage() {
             <label className="text-gray-400 text-sm mb-1">
               アーティスト<span className="text-red-500 ml-1">(必須)</span>
             </label>
-            <input
-              type="text"
-              value={artistInput}   // input用のstate
-              onChange={(e) => setArtistInput(e.target.value)}
-              placeholder="例: The Band"
-              className="border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
-            />
+            {artist.map((value, index) => (
+              <input
+                key={index}
+                type="text"
+                value={value}
+                // value={artistInput}   // input用のstate
+                // onChange={(e) => setArtistInput(e.target.value)}
+                onChange={(e) => {
+                  const newArtist = [...artist]
+                  newArtist[index] = e.target.value
+                  setArtist(newArtist)
+                }}
+                placeholder="例: The Band"
+                className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
+              />
+            ))}
+            
+            {artist.length < 3 && (
+              <button
+                type="button"
+                onClick={addArtistField}
+                className="w-50 flex items-center gap-1 bg-slate-900 border border-gray-600 rounded p-1.5 mt-2"
+              >
+                <AddIcon/>
+                アーティストを追加
+              </button>
+            )}
           </div>
           {/* クリックしたらinputが増える */}
 
@@ -158,7 +182,7 @@ export default function EventCreatePage() {
               value={place}
               onChange={(e) => setPlace(e.target.value)}
               placeholder="例: 幕張メッセ"
-              className="border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
+              className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
           </div>
 
@@ -171,7 +195,7 @@ export default function EventCreatePage() {
               value={eventTitle}
               onChange={(e) => setEventTitle(e.target.value)}
               placeholder="例: SUMMER TOUR 2026"
-              className="border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
+              className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
           </div>
 
@@ -180,20 +204,21 @@ export default function EventCreatePage() {
               評価<span className="text-gray-300 ml-2">(任意)</span>
             </label>
             <div className="flex">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                type="button"
-                onClick={() => setRating(star)}
-              >
-                {/* starがrating以下なら塗りつぶす */}
-                {star <= rating ? (
-                  <StarRateIcon className="text-yellow-400" />
-                ) : (
-                  <StarBorderIcon />
-                )}
-              </button>
-            ))}
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setRating(star)}
+                  className="text-gray-400"
+                >
+                  {/* starがrating以下なら塗りつぶす */}
+                  {star <= rating ? (
+                    <StarRateIcon className="text-yellow-400" />
+                  ) : (
+                    <StarBorderIcon />
+                  )}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -206,7 +231,7 @@ export default function EventCreatePage() {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="会場のメモやその日の出来事など（任意）"
-              className="border border-gray-600 rounded w-80 p-1.5 focus:outline focus:outline-green-400"
+              className="bg-slate-900 border border-gray-600 rounded w-100 p-1.5 focus:outline focus:outline-green-400"
             />
           </div>
 
@@ -219,13 +244,14 @@ export default function EventCreatePage() {
               value={songList}
               onChange={(e) => setSongList(e.target.value)}
               placeholder="セットリストを入力（任意）"
-              className="border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
+              className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
           </div>
 
-          <div>
+          <div className="flex flex-col mt-5">
             <label
               htmlFor="ticketImageKey"
+              className="text-gray-400 text-sm mb-1"
             >
               チケット画像
             </label>
@@ -233,18 +259,20 @@ export default function EventCreatePage() {
               type="file"
               onChange={handleTicketImage}
               accept="image/*"
+              className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
+            {/* 大きさ調整 */}
+            <div className="mx-auto mt-3">
+              <TicketImage url={ticketImageUrl ?? ""} />
+            </div>
           </div>
+
+          {/* 思い出画像 */}
 
           <div className="flex justify-center mt-5">
             <button
               type="submit"
               className="bg-pink-400 px-3 py-2 rounded hover:bg-pink-500"
-              onClick={() => {
-                // inputのstateのテキストをartistの配列に追加する
-                setArtist([...artist, artistInput])
-                setArtistInput("")
-              }}
             >
               登録
             </button>
