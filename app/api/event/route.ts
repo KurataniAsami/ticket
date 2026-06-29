@@ -9,7 +9,6 @@ export type EventIndexResponse = {
 // POSTの型
 export type CreateEventRequestBody = {
   eventTitle?: string
-  artist: string[]
   place: string
   eventDate: string
   rating?: number
@@ -17,13 +16,19 @@ export type CreateEventRequestBody = {
   songList?: string
   comment?: string[]
   ticketImageKey?: string
+  artist: string[]
 }
 
 export const GET = async () => {
   try {
     const events = await prisma.event.findMany({
       include: {
-        place: true
+        place: true,
+        artist: {
+          include: {
+            artist: true
+          },
+        },
       },
       orderBy: {
         eventDate: 'desc'
@@ -44,8 +49,9 @@ export const GET = async () => {
 export const POST = async (request: NextRequest) => {
   try {
     const body : CreateEventRequestBody = await request.json()
-
-    const { eventTitle, artist, place, eventDate, rating, note, songList, ticketImageKey } = body
+console.log("body:", body)
+    const { eventTitle, place, eventDate, rating, note, songList, ticketImageKey } = body
+    const { artist: artistNames = [] } = body
 
     // 同じplaceがなければ作成(同一の会場でもレコードが重複しないようにする)
     let placeData = await prisma.place.findFirst({
@@ -66,10 +72,23 @@ export const POST = async (request: NextRequest) => {
       throw new Error("会場が存在しません")
     }
 
+    // upsert: 同じnameがあれば更新、なければ作成
+    // uniqeにしか使えない
+
+    const artistRecords = await Promise.all(
+      artistNames.map((name) =>
+        prisma.artist.upsert({
+          where: { name },
+          create: { name },
+          update: {},
+        })
+      )
+    )
+
+    // event作成
     const eventData = await prisma.event.create({
       data: {
         eventTitle: eventTitle,
-        artist: artist,  //　配列
         eventDate: new Date(eventDate),
         rating: rating,
         note: note,
@@ -78,6 +97,15 @@ export const POST = async (request: NextRequest) => {
         ticketImageKey: ticketImageKey
       },
     })
+
+    // artist作成
+    await prisma.eventArtist.createMany({
+      data: artistRecords.map((artist) => ({
+        eventId: eventData.id,
+        artistId: artist.id
+      }))
+    })
+
     return NextResponse.json({
       id: eventData.id
     })

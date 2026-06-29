@@ -21,7 +21,12 @@ export const GET = async (
       },
       include: {
         place: true,
-        eventImages: true
+        eventImages: true,
+        artist: {
+          include: {
+            artist: true
+          },
+        },
       }
     })
     if(!event) {

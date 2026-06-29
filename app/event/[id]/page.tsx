@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 
 import { EventDetail } from "@/app/types/event"
@@ -9,6 +8,7 @@ import { SpotifyArtist } from "@/app/types/artist";
 
 import StarRating from "@/app/components/Stars";
 import EventImageCard from "@/app/components/EventImageCard";
+import ArtistImage from "@/app/components/ArtistImage";
 
 import ArticleIcon from '@mui/icons-material/Article';
 import MicIcon from '@mui/icons-material/Mic';
@@ -26,6 +26,8 @@ export default function EventDetailPage() {
   const [artist, setArtist] = useState<SpotifyArtist[]>([])
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(false);
+
+  
 
   useEffect(() => {
     const getEvent = async () => {
@@ -46,14 +48,14 @@ export default function EventDetailPage() {
 
   // spotify APIからアーティスト画像を取得
   useEffect(() => {
-    if(!event?.artist) return  // 意味
+    if(!event?.artist) return  
 
     const getArtistImage = async () => {
     try {
       const artists = await Promise.all(
-        event.artist.map(async (artistName) => {
+        event.artist.map(async (eArtist) => {
           const response = await fetch(
-            `/api/spotify/artist?artist=${encodeURIComponent(artistName)}`
+            `/api/spotify/artist?artist=${encodeURIComponent(eArtist.artist.name)}`
           )
 
           return response.json()
@@ -70,6 +72,7 @@ export default function EventDetailPage() {
 
     getArtistImage()
   },[event])
+  
 
   if(loading) return <p>Loading...</p>
   if(!event) return <p>イベントがありません</p>
@@ -136,28 +139,18 @@ export default function EventDetailPage() {
         <div className="flex justify-center mt-4">
           <div className="flex flex-col w-[500px] gap-5">
             <div className="flex flex-col gap-1">
-              {event.artist.map((artistName) => (
-                <p key={artistName} className="text-xl">
-                  {artistName}
-                </p>
+              {event.artist.map((eArtist) => (
+                <span key={eArtist.artist.id}>
+                  {eArtist.artist.name}
+                </span>
               ))}
             </div>
 
             {/* 5段目、 アーティスト画像 */}
             <div className="flex gap-3">
-              {artist.map((artistData) => (
-                <div key={artistData.spotifyUrl}>
-                  {artistData.imageUrl && (
-                    <Image
-                      src={artistData.imageUrl}
-                      alt={artistData.name}
-                      width={100}
-                      height={100}
-                      className="rounded-full"
-                    />
-                  )}
-                </div>
-              ))}
+                <ArtistImage
+                  artist={event.artist.map((eArtist) => eArtist.artist.name)}
+                />
             </div>
           </div>
         </div>

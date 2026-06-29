@@ -7,40 +7,57 @@ datasource db {
 }
 
 model Event {
-  id            Int     @id @default(autoincrement())
-  eventTitle    String?
-  artist        String[]
-  artistImage   String?   // アーティストは必須項目だが、artist登録時には画像が存在しないから?にする
-  eventDate     DateTime
-  ticketImageKey   String?
-  note          String?
-  songList      String?
-  rating        Int?   // レビュー
+  id              Int     @id @default(autoincrement())
+  eventTitle      String?
+  eventDate       DateTime
+  ticketImageKey  String?
+  note            String?
+  songList        String?
+  rating          Int?   // レビュー
 
   // 画像が0件でも空配列になるからオプショナルにしなくてもいい
   // memoryImage   String[]
 
-  placeId       Int
-  place         Place     @relation(fields: [placeId], references: [id])
+  placeId         Int
+  place           Place     @relation(fields: [placeId], references: [id])
 
-  eventImages    EventImage[]
+  eventImages     EventImage[]
+  artist          EventArtist[]
 }
 
-model EventImage {
-  id            Int     @id @default(autoincrement())
-  url           String      // 存在するならurlは必ず持つ必要があるので?にしない
-  comment       String?
-
-  eventId       Int
-  event         Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+model Artist {
+  id              Int     @id @default(autoincrement())
+  name            String  @unique    // 同一アーティストを重複させない
+  imageUrl        String?
+  events          EventArtist[]
 }
 
 model Place {
-  id      Int           @id @default(autoincrement())
-  name    String
-  events  Event[]
+  id              Int           @id @default(autoincrement())
+  name            String
+  events          Event[]
 }
 
+model EventImage {
+  id              Int     @id @default(autoincrement())
+  url             String      // 存在するならurlは必ず持つ必要があるので?にしない
+  comment         String?
+
+  eventId         Int
+  event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+model EventArtist {
+  eventId         Int
+  artistId        Int
+
+  event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  artist   Artist @relation(fields: [artistId], references: [id])
+
+  @@id([eventId, artistId])
+}
+
+// Event → EventArtist → Artist
 
 // 別のプロジェクトのテーブル
 model Pokemon {

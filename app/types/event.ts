@@ -2,9 +2,17 @@
 export type EventList = {
   id: number
   eventTitle?: string
-  artist: string[]
   eventDate: string       // フロントで使うからstring
   ticketImageKey?: string
+
+    artist: {
+      artist: {
+        id: number
+        name: string
+        imageUrl?: string | null
+      }
+    }[]
+
     place: {
       id: number
       name: string
@@ -20,12 +28,19 @@ export type EventIndexResponse = {
 export type EventDetail = {
   id: number
   eventTitle?: string
-  artist: string[]
   eventDate: string       
   ticketImageKey?: string
-  note?:         string
+  note?: string
   songList?: string
   rating?: number
+
+  artist: {
+    artist: {
+      id: number
+      name: string
+      imageUrl?: string | null
+    }
+  }[]
 
   eventImages:{
     id: number

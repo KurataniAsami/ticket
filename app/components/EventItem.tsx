@@ -72,8 +72,15 @@ export default function ({ event }: Props) {
                     <p className="text-xl text-white font-bold">{event.eventTitle}</p>
                   </div>
 
-                  <div className="flex gap-2 items-center">
-                    <p className="text-gray-300 mt-1 ml-1">{event.artist}</p>
+                  <div>
+                    {event.artist.map((eArtist) => (
+                      <span
+                        key={eArtist.artist.id}
+                        className="text-gray-300"
+                      >
+                        {eArtist.artist.name}
+                      </span>
+                    ))}
                   </div>
 
                   <div className="flex gap-2 items-center">

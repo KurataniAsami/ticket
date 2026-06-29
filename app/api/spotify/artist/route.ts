@@ -1,5 +1,3 @@
-import { prisma } from "@/app/libs/prisma";
-import { request } from "http";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (request: NextRequest) => {
