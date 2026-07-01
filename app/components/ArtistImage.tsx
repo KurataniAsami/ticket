@@ -4,6 +4,7 @@ import Image from "next/image";
 
 type Props = {
   artist: string[]
+  imageUrl: string | null
 }
 
 export default function ArtistImage({ artist }: Props) {
@@ -42,7 +43,6 @@ export default function ArtistImage({ artist }: Props) {
     <div className="flex gap-3">
       {artists.map((artistData) => (
         <div key={artistData.spotifyUrl}>
-          {artistData.imageUrl && (
             <Image
               src={artistData.imageUrl}
               alt={artistData.name}
@@ -50,7 +50,6 @@ export default function ArtistImage({ artist }: Props) {
               height={100}
               className="rounded-full"
             />
-          )}
         </div>
       ))}
     </div>
