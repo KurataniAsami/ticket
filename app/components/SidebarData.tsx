@@ -12,7 +12,7 @@ export const SidebarData = [
   {
     title: "アーティスト一覧",
     icon: <MicIcon/>,
-    link: "/"
+    link: "/artist"
   },
   {
     title: "会場一覧",
