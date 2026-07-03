@@ -28,6 +28,7 @@ export default function ArtistCard({ artist }: Props) {
                 <ArtistImage
                   imageUrl={artist.imageUrl}
                   artist={[artist.name]}
+                  rounded={true}
                 />
               </div>
               {artist.name}

@@ -5,9 +5,17 @@ import Image from "next/image";
 type Props = {
   artist: string[]
   imageUrl: string | null
+  rounded?: boolean
+  width?:number
+  height?:number
 }
 
-export default function ArtistImage({ artist }: Props) {
+export default function ArtistImage({
+    artist,
+    rounded = true,
+    width = 100,
+    height = 100,
+  }: Props) {
   const [artists, setArtists] = useState<SpotifyArtist[]>([])
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(false);
@@ -23,7 +31,6 @@ export default function ArtistImage({ artist }: Props) {
             const response = await fetch(
               `/api/spotify/artist?artist=${encodeURIComponent(artistName)}`
             )
-  
             return response.json()
           })
         )
@@ -46,14 +53,12 @@ export default function ArtistImage({ artist }: Props) {
             <Image
               src={artistData.imageUrl}
               alt={artistData.name}
-              width={100}
-              height={100}
-              className="rounded-full"
+              width={width}
+              height={height}
+              className={rounded ? "rounded-full" : ""}
             />
         </div>
       ))}
     </div>
   )
 }
-
-// 画像サイズはpropsでそれぞれ変える
