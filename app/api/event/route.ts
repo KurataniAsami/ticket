@@ -19,8 +19,10 @@ export type CreateEventRequestBody = {
   artist: string[]
 }
 
-export const GET = async () => {
+export const GET = async (request: NextRequest) => {
   try {
+    const sort = request.nextUrl.searchParams.get("sort") ?? "desc";
+
     const events = await prisma.event.findMany({
       include: {
         place: true,
@@ -30,9 +32,10 @@ export const GET = async () => {
           },
         },
       },
+
       orderBy: {
-        eventDate: 'desc'
-      }
+        eventDate: sort === "asc" ? "asc" : "desc",
+      },
     })
 
     return NextResponse.json({
