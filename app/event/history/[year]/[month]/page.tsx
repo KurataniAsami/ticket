@@ -10,12 +10,16 @@ import { useRouter } from "next/navigation";
 import MonthSelect from "@/app/components/MonthSelect";
 
 export default function YearHistoryPage() {
-  const { year } = useParams<{ year: string }>()
+  const { year, month } = useParams<{ year: string, month: string }>()
   const [events, setEvents] = useState<EventList[]>([])
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(true)
 
   const router = useRouter()
+
+  const monthEvents = events.filter((event) => {
+  return event.eventDate.startsWith(`${year}-${month.padStart(2, "0")}`)
+})
 
   useEffect(() => {
     const getYearEvent = async () => {
@@ -62,13 +66,13 @@ export default function YearHistoryPage() {
 
       <div className="mt-5">
         {/* <h1>{year}年{monthNames}のアーカイブ</h1> */}
-        <div className="text-green-400 text-3xl ml-10">{year}年</div>
+        <div className="text-green-400 text-3xl ml-10">{year}年{month}月</div>
       </div>
 
       
-      {events.length > 0 ? (
+      {monthEvents.length > 0 ? (
         <div className="flex flex-wrap justify-center">
-          {events.map((event) => (
+          {monthEvents.map((event) => (
               <EventItem
                 event={event}
                 key={event.id}
@@ -76,16 +80,11 @@ export default function YearHistoryPage() {
           ))}
         </div>
       ):(
-        <div>
+        <div className="text-center mt-5">
           <h2>ライブが見つかりませんでした</h2>
-          <p>「{year}年」のライブはまだありません</p>
+          <p>{month}月のライブはまだありません</p>
         </div>
       )}
     </>
   )
 }
-
-// アーカイブ表示でAPIの設定はなし
-
-// サイドバーのリンク設定
-// セレクトボタンで月を選択
