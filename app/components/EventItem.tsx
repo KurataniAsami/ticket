@@ -14,7 +14,7 @@ type Props = {
   event: EventList
 }
 
-export default function ({ event }: Props) {
+export default function EventItempage({ event }: Props) {
   // ブラウザからアクセスするためのURLをstateに保存
   const [imageUrl, setImageUrl] = useState("")
 
@@ -54,7 +54,7 @@ export default function ({ event }: Props) {
               <TicketImage url={imageUrl} />
               
               <div className="flex gap-3">
-                <div className="flex flex-col items-center border border-gray-600 rounded-xl px-3 py-2">
+                <div className="flex flex-col items-center h-[72px] border border-gray-600 rounded-xl px-3 py-2">
                   <CalendarMonthIcon
                     className="text-white"
                   />
@@ -72,18 +72,18 @@ export default function ({ event }: Props) {
                     <p className="text-xl text-white font-bold">{event.eventTitle}</p>
                   </div>
 
-                  <div>
+                  <div className="flex flex-col">
                     {event.artist.map((eArtist) => (
                       <span
-                        key={eArtist.artist.id}
+                        key={eArtist.id}
                         className="text-gray-300"
                       >
-                        {eArtist.artist.name}
+                        {eArtist.name}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center mt-2">
                     <LocationOnIcon 
                       className="text-gray-400"
                     />

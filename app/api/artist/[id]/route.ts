@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/libs/prisma";
+import { EventList } from "@/app/types/event";
 
 export type ArtistShowResponse = {
   artist: {
@@ -10,6 +11,7 @@ export type ArtistShowResponse = {
       events: number
     }
   }
+  events: EventList[]
   firstLiveDate: string | null
   averegeRating: number | null
 }
@@ -34,17 +36,15 @@ export const GET = async (
           },
         },
 
-        //　初参戦の日（一番古い日付）を取得
+        // 全件取得（過去の参戦歴）
         events: {
           include: {
-            event: true,
+            artist: true,
+            place: true,
           },
           orderBy: {
-            event: {
-              eventDate: "asc"
-            },
+            eventDate: "asc",
           },
-          take: 1
         }
       },
     })
@@ -58,7 +58,7 @@ export const GET = async (
 
     // 5段階評価の平均
     const ratings = artist.events
-      .map((eventArtist) => eventArtist.event.rating)
+      .map((eventArtist) => eventArtist.rating)
       .filter((rating): rating is number => rating != null)
 
     const averageRating = 
@@ -69,15 +69,16 @@ export const GET = async (
     // [0]で配列の先頭、?はライブがない時のために?がつく、 
     // ?? nullはeventがない時nullを返す
     const firstLiveDate = 
-      artist.events[0]?.event.eventDate ?? null
+      artist.events[0]?.eventDate ?? null
 
     return NextResponse.json({
-        // stateが3種類必要 
-        artist,
-        firstLiveDate,
-        averageRating,
-      },
-      { status: 200 })
+      // stateが3種類必要 
+      artist,
+      events: artist.events,  // 参戦歴のデータ、 stateにセット
+      firstLiveDate,   // stateにセット
+      averageRating,   // stateにセット
+    },
+    { status: 200 })
   } catch(error) {
     if(error instanceof Error) {
       return NextResponse.json({ message: error.message }, { status: 400 })

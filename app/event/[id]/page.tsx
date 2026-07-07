@@ -27,8 +27,6 @@ export default function EventDetailPage() {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(false);
 
-  
-
   useEffect(() => {
     const getEvent = async () => {
       try {
@@ -55,7 +53,7 @@ export default function EventDetailPage() {
       const artists = await Promise.all(
         event.artist.map(async (eArtist) => {
           const response = await fetch(
-            `/api/spotify/artist?artist=${encodeURIComponent(eArtist.artist.name)}`
+            `/api/spotify/artist?artist=${encodeURIComponent(eArtist.name)}`
           )
 
           return response.json()
@@ -95,7 +93,6 @@ export default function EventDetailPage() {
       </div>
 
       <div className="flex flex-col">
-
         {/* 1段目、タイトルと５段階評価 */}
         <div className="flex justify-center mb-2">
           <div className="flex w-[500px]">
@@ -138,10 +135,10 @@ export default function EventDetailPage() {
         {/* 4段目、 アーティスト名 */}
         <div className="flex justify-center mt-4">
           <div className="flex flex-col w-[500px] gap-5">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 text-xl ml-1">
               {event.artist.map((eArtist) => (
-                <span key={eArtist.artist.id}>
-                  {eArtist.artist.name}
+                <span key={eArtist.id}>
+                  {eArtist.name}
                 </span>
               ))}
             </div>
@@ -149,7 +146,7 @@ export default function EventDetailPage() {
             {/* 5段目、 アーティスト画像 */}
             <div className="flex gap-3">
                 <ArtistImage
-                  artist={event.artist.map((eArtist) => eArtist.artist.name)}
+                  artist={event.artist.map((eArtist) => eArtist.name)}
                 />
             </div>
           </div>

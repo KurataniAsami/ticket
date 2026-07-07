@@ -1,18 +1,24 @@
 'use client'
 
-import { ArtistShowResponse } from "@/app/api/artist/[id]/route"
-import ArtistImage from "@/app/components/ArtistImage"
-import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+
+import { ArtistShowResponse } from "@/app/api/artist/[id]/route"
+
+import ArtistImage from "@/app/components/ArtistImage"
+import EventItempage from "@/app/components/EventItem"
 
 import ArticleIcon from '@mui/icons-material/Article';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import StarRateIcon from '@mui/icons-material/StarRate';
+import RestoreIcon from '@mui/icons-material/Restore';
+
 
 export default function ArtistDetailPage() {
   const [artist, setArtist] = useState<ArtistShowResponse["artist"] | null>(null)
   const [firstLiveDate, setFirstLivedate] = useState<ArtistShowResponse["firstLiveDate"]>(null)
   const [averageRating, setAverageRating] = useState<ArtistShowResponse["averegeRating"]>(null)
+  const [events, setEvents] = useState<ArtistShowResponse["events"]>([])  // 参戦履歴で使用
   const { id } = useParams<{ id: string }>()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
@@ -25,13 +31,13 @@ export default function ArtistDetailPage() {
         setArtist(data.artist)
         setFirstLivedate(data.firstLiveDate)
         setAverageRating(data.averageRating)
+        setEvents(data.events)
       } catch (error) {
         setError(true)
       } finally {
         setLoading(false)
       }
     }
-
     getArtist()
   },[id])
 
@@ -99,6 +105,25 @@ export default function ArtistDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* 過去の参戦歴 */}
+      <div className="mt-5 ml-5">
+        <div className="flex items-center gap-2 text-xl">
+          <div className="text-pink-400"><RestoreIcon/></div>
+          <p>過去の参戦歴</p>
+        </div>
+
+        <div className="flex flex-wrap">
+          {events.map((event) => (
+            <EventItempage
+              key={event.id}
+              event={event}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
+
+// コンポーネントにProps?
