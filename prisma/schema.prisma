@@ -6,6 +6,7 @@ datasource db {
   provider = "postgresql"
 }
 
+// Artist ↔ Event（多対多）
 model Event {
   id              Int     @id @default(autoincrement())
   eventTitle      String?
@@ -22,14 +23,14 @@ model Event {
   place           Place     @relation(fields: [placeId], references: [id])
 
   eventImages     EventImage[]
-  artist          EventArtist[]
+  artist          Artist[]
 }
 
 model Artist {
   id              Int     @id @default(autoincrement())
   name            String  @unique    // 同一アーティストを重複させない
   imageUrl        String?
-  events          EventArtist[]
+  events          Event[]
 }
 
 model Place {
@@ -47,15 +48,15 @@ model EventImage {
   event           Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
 }
 
-model EventArtist {
-  eventId         Int
-  artistId        Int
+// model EventArtist {
+//   eventId         Int
+//   artistId        Int
 
-  event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  artist   Artist @relation(fields: [artistId], references: [id])
+//   event    Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+//   artist   Artist @relation(fields: [artistId], references: [id])
 
-  @@id([eventId, artistId])
-}
+//   @@id([eventId, artistId])
+// }
 
 // Event → EventArtist → Artist
 
