@@ -29,6 +29,7 @@ export const GET = async (
       },
 
       // ライブ参戦数をカウント
+      // _countでprismaが内部でカウントをしてくれる
       include: {
         _count: {
           select: {
