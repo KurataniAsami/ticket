@@ -19,6 +19,7 @@ export const GET = async () => {
       },
       include: {
         artist: true,
+        place: true
       }
     })
 

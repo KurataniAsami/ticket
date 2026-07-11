@@ -25,6 +25,7 @@ export default function UpcomingEventsList() {
     getComingEvent()
   },[])
 
+
   if(loading) return <p>Loding...</p>
   if(!events) return <p>対象の講演がありません</p>
 
@@ -34,13 +35,13 @@ export default function UpcomingEventsList() {
         <YearSelect
           value={year}
           onChange={(selectYear) => 
-            router.push(`/event/history/${selectYear}`)
+            router.push(`/upcomingEvents/schedule/${selectYear}`)
           }
         />
         <MonthSelect
-          value=""
-          onChange={(month) => {
-            router.push(`/event/history/${year}/${month}`)
+          value={month}
+          onChange={(value) => {
+            router.push(`/upcomingEvents/schedule/${year}/${value}`)
           }}
         />
       </div>
