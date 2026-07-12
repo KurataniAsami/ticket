@@ -17,12 +17,12 @@ export const SidebarData = [
   {
     title: "会場一覧",
     icon: <LocationOnIcon/>,
-    link: "/"
+    link: "/place"
   },
   {
     title: "カレンダー",
     icon: <CalendarMonthIcon/>,
-    link: "/"
+    link: "/calendar"
   },
 ]
 

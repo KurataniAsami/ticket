@@ -11,6 +11,7 @@ model Event {
   id              Int     @id @default(autoincrement())
   eventTitle      String?
   eventDate       DateTime
+  startTime       String?
   ticketImageKey  String?
   note            String?
   songList        String?

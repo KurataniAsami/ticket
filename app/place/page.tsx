@@ -1,12 +1,9 @@
 'use client'
 
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card"
-import Link from "next/link"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { PlaceIndexResponse } from "../api/place/route"
+import { Card,CardContent } from "@/components/ui/card"
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 export default function PlaceListPage() {

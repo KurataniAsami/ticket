@@ -17,7 +17,7 @@ export default function ArtistCard({ artist }: Props) {
     <div>
       <Card
         className="
-          w-[360px] h-[250px] bg-slate-900 border border-slate-800
+          w-[340px] h-[240px] bg-slate-900 border border-slate-800
         hover:bg-slate-800
       ">
         <CardContent>
@@ -31,7 +31,7 @@ export default function ArtistCard({ artist }: Props) {
                   rounded={true}
                 />
               </div>
-              {artist.name}
+              <p className="mt-3">{artist.name}</p>
             </div>
           </Link>
         </CardContent>

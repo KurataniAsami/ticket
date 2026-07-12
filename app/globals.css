@@ -53,6 +53,22 @@ body {
   background: #0f0c1b;
 }
 
+/* カレンダーの今日の部分のマスの背景色 */
+.fc .fc-day-today {
+  background-color: #2c5442 !important;
+}
+
+/* デフォルトでイベント名の横に・がつくので非表示にする */
+.fc .fc-daygrid-event-dot {
+  display: none !important;
+}
+
+/* マス */
+.fc .fc-daygrid-day-frame {
+  height: 88px;
+  overflow: hidden;
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

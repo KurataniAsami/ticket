@@ -13,7 +13,7 @@ import TicketImage from "@/app/components/TicketImage"
 
 import AddIcon from '@mui/icons-material/Add';
 
-export default function EventCreatePage() {
+export default function CreateEventForm() {
   const router = useRouter()
 
   const [eventTitle, setEventTitle] = useState('')

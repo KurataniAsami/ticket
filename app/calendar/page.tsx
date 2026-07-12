@@ -5,6 +5,7 @@ import { Calendar } from "../components/Calendar"
 import { EventList } from "../types/event"
 import { Card,CardContent } from "@/components/ui/card"
 import Link from "next/link"
+import EventCreateDrawer from "../components/EventCreateDrawer"
 
 export type EventProps = {
   events: EventList[]
@@ -36,13 +37,18 @@ export default function CalendarPage() {
         </Link>
       </div>
       
-      <Card className="bg-gray-900 text-white">
-        <CardContent>
-          <Calendar
-            events={events}
-          />
-        </CardContent>
-      </Card>
+      <div className="flex gap-4 items-start">
+        
+
+        <Card className="flex-1 bg-gray-900 text-white">
+          <CardContent>
+            <Calendar events={events} />
+          </CardContent>
+        </Card>
+
+        <EventCreateDrawer />
+      </div>
+      {/* カレンダーではなくフォームが縮むように */}
     </div>
   )
 }

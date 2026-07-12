@@ -26,11 +26,7 @@ export const GET = async (request: NextRequest) => {
     const events = await prisma.event.findMany({
       include: {
         place: true,
-        artist: {
-          include: {
-            artist: true
-          },
-        },
+        artist: true
       },
 
       orderBy: {
@@ -52,7 +48,6 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   try {
     const body : CreateEventRequestBody = await request.json()
-console.log("body:", body)
     const { eventTitle, place, eventDate, rating, note, songList, ticketImageKey } = body
     const { artist: artistNames = [] } = body
 
@@ -97,16 +92,14 @@ console.log("body:", body)
         note: note,
         songList: songList,
         placeId: placeData.id,
-        ticketImageKey: ticketImageKey
-      },
-    })
+        ticketImageKey: ticketImageKey,
 
-    // artist作成
-    await prisma.eventArtist.createMany({
-      data: artistRecords.map((artist) => ({
-        eventId: eventData.id,
-        artistId: artist.id
-      }))
+        artist: {
+          connect: artistRecords.map((artist) => ({
+            id: artist.id,
+          }))
+        }
+      },
     })
 
     return NextResponse.json({

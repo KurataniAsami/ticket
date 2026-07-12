@@ -30,18 +30,18 @@ export default function ArtistListPage() {
 
   return(
     <div>
-      <p>アーティスト一覧</p>
-      <div>
+      <p className="text-xl my-3">アーティスト一覧</p>
+      <div className="flex flex-wrap gap-3">
         {artists.map((artist) => (
           <Link
             href={`/api/artist/${artist.id}`}
             key={artist.id}  
           >
-          <div>
-            <ArtistCard
-              artist={artist}
-            />
-          </div>
+            <div>
+              <ArtistCard
+                artist={artist}
+              />
+            </div>
           </Link>
         ))}
       </div>

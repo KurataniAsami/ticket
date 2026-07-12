@@ -6,11 +6,9 @@ export type EventList = {
   ticketImageKey?: string
 
     artist: {
-      artist: {
-        id: number
-        name: string
-        imageUrl?: string | null
-      }
+      id: number
+      name: string
+      imageUrl?: string | null
     }[]
 
     place: {
@@ -35,11 +33,9 @@ export type EventDetail = {
   rating?: number
 
   artist: {
-    artist: {
-      id: number
-      name: string
-      imageUrl?: string | null
-    }
+    id: number
+    name: string
+    imageUrl?: string | null
   }[]
 
   eventImages:{

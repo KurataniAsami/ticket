@@ -21,14 +21,11 @@ export const GET = async (
       },
       include: {
         place: true,
+        artist: true,
         eventImages: true,
-        artist: {
-          include: {
-            artist: true
-          },
-        },
-      }
+      },
     })
+    
     if(!event) {
       return NextResponse.json(
         { message: 'イベントが見つかりません'},

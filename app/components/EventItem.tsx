@@ -17,7 +17,7 @@ type Props = {
 export default function EventItempage({ event }: Props) {
   // ブラウザからアクセスするためのURLをstateに保存
   const [imageUrl, setImageUrl] = useState("")
-
+console.log(event)
   useEffect(() => {
   if (!event.ticketImageKey) return
 

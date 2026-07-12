@@ -4,7 +4,7 @@ import Image from "next/image";
 
 type Props = {
   artist: string[]
-  imageUrl: string | null
+  imageUrl?: string | null
   rounded?: boolean
   width?:number
   height?:number
