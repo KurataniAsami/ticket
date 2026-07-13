@@ -13,11 +13,16 @@ import TicketImage from "@/app/components/TicketImage"
 
 import AddIcon from '@mui/icons-material/Add';
 
-export default function CreateEventForm() {
+type CreateEventFormProps = {
+  textColor?: string
+}
+
+export default function CreateEventForm({
+  textColor = "text-white",
+}: CreateEventFormProps) {
   const router = useRouter()
 
   const [eventTitle, setEventTitle] = useState('')
-
   const [artist, setArtist] = useState<string[]>([""])  // 配列なので<string[]>
 
   const [place, setPlace] = useState<string>('')
@@ -121,13 +126,14 @@ export default function CreateEventForm() {
   }
 
   return (
-    <div className="mt-5">
-      <p className="text-xl text-center">ライブ記録を追加</p>
-
+    <div className="mt-5 min-w-0">
+        <p className="text-xl text-center text-white">ライブ記録を追加</p>
       <div className="flex justify-center mt-3">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}
+          className="w-full min-w-0"
+        >
           <div className="flex flex-col">
-            <label className="text-gray-400 text-sm mb-1">
+            <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               日時<span className="text-red-500 ml-1">(必須)</span>
             </label>
             <input
@@ -139,7 +145,7 @@ export default function CreateEventForm() {
           </div>
 
           <div className="flex flex-col mt-5">
-            <label className="text-gray-400 text-sm mb-1">
+            <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               アーティスト<span className="text-red-500 ml-1">(必須)</span>
             </label>
             {artist.map((value, index) => (
@@ -163,7 +169,7 @@ export default function CreateEventForm() {
               <button
                 type="button"
                 onClick={addArtistField}
-                className="w-50 flex items-center gap-1 bg-slate-900 border border-gray-600 rounded p-1.5 mt-2"
+                className="flex items-center gap-1 bg-slate-900 border border-gray-600 rounded p-1.5 mt-2"
               >
                 <AddIcon/>
                 アーティストを追加
@@ -173,7 +179,7 @@ export default function CreateEventForm() {
           {/* クリックしたらinputが増える */}
 
           <div className="flex flex-col mt-5">
-            <label className="text-gray-400 text-sm mb-1">
+            <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               会場<span className="text-red-500 ml-1">(必須)</span>
             </label>
             <input
@@ -186,7 +192,7 @@ export default function CreateEventForm() {
           </div>
 
           <div className="flex flex-col mt-5">
-            <label className="text-gray-400 text-sm mb-1">
+            <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               ライブ/ツアー名<span className="text-gray-300 ml-2">(任意)</span>
             </label>
             <input
@@ -199,7 +205,7 @@ export default function CreateEventForm() {
           </div>
 
           <div className="flex flex-col mt-5">
-            <label className="text-gray-400 text-sm mb-1">
+            <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               評価<span className="text-gray-300 ml-2">(任意)</span>
             </label>
             <div className="flex">
@@ -222,7 +228,7 @@ export default function CreateEventForm() {
           </div>
 
           <div className="flex flex-col mt-5">
-            <label className="text-gray-400 text-sm mb-1">
+            <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               メモ・感想<span className="text-gray-300 ml-2">(任意)</span>
             </label>
             <input
@@ -230,12 +236,12 @@ export default function CreateEventForm() {
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="会場のメモやその日の出来事など（任意）"
-              className="bg-slate-900 border border-gray-600 rounded w-100 p-1.5 focus:outline focus:outline-green-400"
+              className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
           </div>
 
           <div  className="flex flex-col mt-5">
-            <label className="text-gray-400 text-sm mb-1">
+            <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               セットリスト<span className="text-gray-300 ml-2">(任意)</span>
             </label>
             <input
@@ -250,7 +256,7 @@ export default function CreateEventForm() {
           <div className="flex flex-col mt-5">
             <label
               htmlFor="ticketImageKey"
-              className="text-gray-400 text-sm mb-1"
+              className={`text-gray-400 text-sm mb-1 ${textColor}`}
             >
               チケット画像
             </label>
@@ -271,7 +277,7 @@ export default function CreateEventForm() {
           <div className="flex justify-center mt-5">
             <button
               type="submit"
-              className="bg-pink-400 px-3 py-2 rounded hover:bg-pink-500"
+              className="bg-pink-400 px-3 py-2 rounded text-white hover:bg-pink-500"
             >
               登録
             </button>

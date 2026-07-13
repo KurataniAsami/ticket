@@ -1,12 +1,24 @@
 'use client'
 
 import { useRouter } from "next/navigation"
+import { EventProps } from "../calendar/page"
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
-import jaLocale from "@fullcalendar/core/locales/ja"
-import { EventProps } from "../calendar/page"
 
-export const Calendar = ({ events }: EventProps)  => {
+// ユーザー操作（日付クリック）などが可能になる
+import interactionPlugin from "@fullcalendar/interaction"
+// npm install @fullcalendar/interaction
+import jaLocale from "@fullcalendar/core/locales/ja"
+
+type CalendarProps = EventProps & {
+  onDateClick: () => void
+}
+
+export const Calendar = ({
+    events,
+    onDateClick,
+  }: CalendarProps)  => {
+    
   const router = useRouter();
 
   const calendarEvents = events.map((event) => ({
@@ -27,11 +39,18 @@ export const Calendar = ({ events }: EventProps)  => {
     <div>
       <FullCalendar
         locale={jaLocale}   
-        plugins={[dayGridPlugin]}
+        plugins={[
+          dayGridPlugin,
+          interactionPlugin
+        ]}
         initialView='dayGridMonth'
         firstDay={1}  
         events={calendarEvents}   
         displayEventTime={false}   
+
+        dateClick={() => {
+          onDateClick()
+        }}
 
         // ページ遷移
         eventClick={(info) => {
