@@ -24,7 +24,7 @@ export default function EditEventPage() {
   const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
   // 存在しない値がある時はstringを使う
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   //  編集フォームに既存データを読み込む処理（GET）
@@ -35,13 +35,14 @@ export default function EditEventPage() {
         const data = await res.json()
         const event = data.event
 
-        setEventTitle(data.eventTitle)
-        setArtist(data.artist)
-        setPlace(data.place)
-        setEventDate(data.eventDate)
-        setRating(data.rating)
-        setNote(data.note)
-        setSongList(data.songList)
+        // const event = data.eventとしているためevent.eventTitleになる
+        setEventTitle(event.eventTitle)  
+        setArtist(event.artist)
+        setPlace(event.place.name)
+        setEventDate(event.eventDate)
+        setRating(event.rating)
+        setNote(event.note)
+        setSongList(event.songList)
       } catch(error) {
         setError(error instanceof Error ? error.message: '既存データの取得に失敗しました')
       } finally {
@@ -52,39 +53,44 @@ export default function EditEventPage() {
   },[id])
 
   // 更新処理
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault()
+  // const handleSubmit = async (e: { preventDefault: () => void }) => {
+  //   e.preventDefault()
 
-    const body: UpdateEventRequestBody = {
-      eventTitle,
-      // artist,
-      // place,
-      eventDate,
-      rating,
-      note,
-      songList
-    }
+  //   const body: UpdateEventRequestBody = {
+  //     eventTitle,
+  //     artist?: ...,
+  //     place,
+  //     eventDate,
+  //     rating,
+  //     note,
+  //     songList
+  //   }
 
-    try {
-      const res = await fetch(`/api/event/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(body),
-      })
-      router.push('/event/${id}')
-    } catch(error) {
-      setError(error instanceof Error ? error.message: '更新に失敗')
-    }
-  }
+  //   try {
+  //     const res = await fetch(`/api/event/${id}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(body),
+  //     })
+  //     router.push(`/event/${id}`)
+  //   } catch(error) {
+  //     setError(error instanceof Error ? error.message: '更新に失敗')
+  //   }
+  // }
 
   if(loading) return <p>loading...</p>
 
   return (
     <div className="mt-5 min-w-0">
-        <p className="text-xl text-center text-white">ライブ記録を編集</p>
-      <CreateEventForm/>
+      <p className="text-xl text-center text-white">ライブ記録を編集</p>
+
+      {/* propsでstateを渡して既存のフォームデータを反映させる */}
+      <CreateEventForm
+        eventTitle={eventTitle}
+        setEventTitle={setEventTitle}
+      />
     </div>
   )
 }
