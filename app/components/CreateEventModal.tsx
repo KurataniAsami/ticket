@@ -3,7 +3,7 @@ import {
   DialogContent,
   DialogHeader,
 } from "@/components/ui/dialog"
-import CreateEventForm from "./CreateEventForm"
+import CreateEventForm from "./EventForm"
 
 type EventCreateModalProps = {
   open: boolean

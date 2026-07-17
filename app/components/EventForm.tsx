@@ -13,23 +13,49 @@ import TicketImage from "@/app/components/TicketImage"
 
 import AddIcon from '@mui/icons-material/Add';
 
-type CreateEventFormProps = {
+// type CreateEventFormProps = {
+//   textColor?: string
+// }
+
+type EventFormProps = {
+  eventTitle: string
+  setEventTitle: React.Dispatch<React.SetStateAction<string>>
+  artist: string[]
+  setArtist: React.Dispatch<React.SetStateAction<string[]>>
+  place: string
+  setPlace: React.Dispatch<React.SetStateAction<string>>
+  eventDate: string
+  setEventDate: React.Dispatch<React.SetStateAction<string>>
+  rating: number
+  setRating: React.Dispatch<React.SetStateAction<number>>
+  note: string
+  setNote: React.Dispatch<React.SetStateAction<string>>
+  songList: string
+  setSongList: React.Dispatch<React.SetStateAction<string>>
+
   textColor?: string
 }
 
-export default function CreateEventForm({
+export default function EventForm({
+  eventTitle,
+  setEventTitle,
+  place,
+  setPlace,
+  eventDate,
+  setEventDate,
+  rating = 0,
+  setRating,
+  note = '',
+  setNote,
+  songList = '',
+  setSongList,
+  artist,
+  setArtist,
   textColor = "text-white",
-}: CreateEventFormProps) {
+}: EventFormProps) {
   const router = useRouter()
 
-  const [eventTitle, setEventTitle] = useState('')
-  const [artist, setArtist] = useState<string[]>([""])  // 配列なので<string[]>
-
-  const [place, setPlace] = useState<string>('')
-  const [eventDate, setEventDate] = useState('')
-  const [rating, setRating] = useState(0)
-  const [note, setNote] = useState('')
-  const [songList, setSongList] = useState('')
+  // page.tsxの方からstateを受け取っているのでstateは削除
   const [comment, setComment] = useState<string[]>([])  // 思い出画像につける
 
   const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
@@ -126,7 +152,7 @@ export default function CreateEventForm({
   }
 
   return (
-    <div className="mt-5 min-w-0">
+    <div className="mt-5 min-w-0 mr-5">
         <p className="text-xl text-center text-white">ライブ記録を追加</p>
       <div className="flex justify-center mt-3">
         <form onSubmit={handleSubmit}
@@ -176,7 +202,6 @@ export default function CreateEventForm({
               </button>
             )}
           </div>
-          {/* クリックしたらinputが増える */}
 
           <div className="flex flex-col mt-5">
             <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
@@ -204,6 +229,7 @@ export default function CreateEventForm({
             />
           </div>
 
+{/* コンポーネントある */}
           <div className="flex flex-col mt-5">
             <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               評価<span className="text-gray-300 ml-2">(任意)</span>
@@ -231,8 +257,7 @@ export default function CreateEventForm({
             <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               メモ・感想<span className="text-gray-300 ml-2">(任意)</span>
             </label>
-            <input
-              type="text"
+            <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="会場のメモやその日の出来事など（任意）"
@@ -244,8 +269,7 @@ export default function CreateEventForm({
             <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               セットリスト<span className="text-gray-300 ml-2">(任意)</span>
             </label>
-            <input
-              type="text"
+            <textarea
               value={songList}
               onChange={(e) => setSongList(e.target.value)}
               placeholder="セットリストを入力（任意）"
@@ -274,14 +298,7 @@ export default function CreateEventForm({
 
           {/* 思い出画像 */}
 
-          <div className="flex justify-center mt-5">
-            <button
-              type="submit"
-              className="bg-pink-400 px-3 py-2 rounded text-white hover:bg-pink-500"
-            >
-              登録
-            </button>
-          </div>
+          
         </form>
       </div>
     </div>

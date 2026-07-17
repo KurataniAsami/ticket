@@ -82,7 +82,7 @@ export default function EventDetailPage() {
       <div className="flex items-center gap-5 mt-5 mb-3 pb-3">
         <div className="flex justify-end w-full">
           <Link
-            href={`/event/edit`}
+            href={`/event/${id}/edit/`}
             className="flex gap-1 border border-green-400 rounded-full px-4 py-2"
           >
             <CreateIcon

@@ -1,10 +1,10 @@
 'use client'
 
-import { ChangeEvent, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { UpdateEventRequestBody } from "@/app/api/event/[id]/route"
 import TicketImage from "@/app/components/TicketImage"
-import CreateEventForm from "@/app/components/CreateEventForm"
+import EventForm from "@/app/components/EventForm"
 
 export default function EditEventPage() {
   const router = useRouter()
@@ -37,9 +37,9 @@ export default function EditEventPage() {
 
         // const event = data.eventとしているためevent.eventTitleになる
         setEventTitle(event.eventTitle)  
-        setArtist(event.artist)
+        setArtist(event.artist.map((artist: { name: string }) => artist.name))
         setPlace(event.place.name)
-        setEventDate(event.eventDate)
+        setEventDate(new Date(event.eventDate).toISOString().split("T")[0])
         setRating(event.rating)
         setNote(event.note)
         setSongList(event.songList)
@@ -53,32 +53,31 @@ export default function EditEventPage() {
   },[id])
 
   // 更新処理
-  // const handleSubmit = async (e: { preventDefault: () => void }) => {
-  //   e.preventDefault()
-
-  //   const body: UpdateEventRequestBody = {
-  //     eventTitle,
-  //     artist?: ...,
-  //     place,
-  //     eventDate,
-  //     rating,
-  //     note,
-  //     songList
-  //   }
-
-  //   try {
-  //     const res = await fetch(`/api/event/${id}`, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(body),
-  //     })
-  //     router.push(`/event/${id}`)
-  //   } catch(error) {
-  //     setError(error instanceof Error ? error.message: '更新に失敗')
-  //   }
-  // }
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault()
+    const body: UpdateEventRequestBody = {
+      eventTitle,
+      artist,
+      place,
+      eventDate,
+      rating,
+      note,
+      songList
+    }
+    
+    try {
+      const res = await fetch(`/api/event/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      })
+      router.push(`/event/${id}`)
+    } catch(error) {
+      setError(error instanceof Error ? error.message: '更新に失敗')
+    }
+  }
 
   if(loading) return <p>loading...</p>
 
@@ -87,10 +86,32 @@ export default function EditEventPage() {
       <p className="text-xl text-center text-white">ライブ記録を編集</p>
 
       {/* propsでstateを渡して既存のフォームデータを反映させる */}
-      <CreateEventForm
+      <EventForm
         eventTitle={eventTitle}
         setEventTitle={setEventTitle}
+        place={place}
+        setPlace={setPlace}
+        eventDate={eventDate}
+        setEventDate={setEventDate}
+        rating={rating}
+        setRating={setRating}
+        note={note}
+        setNote={setNote}
+        songList={songList}
+        setSongList={setSongList}
+        artist={artist}
+        setArtist={setArtist}
       />
+
+      <div className="flex justify-center mt-5">
+        <button
+          type="submit"
+          onClick={handleSubmit}
+          className="bg-pink-400 px-3 py-2 rounded text-white hover:bg-pink-500"
+        >
+          編集
+        </button>
+      </div>
     </div>
   )
 }
