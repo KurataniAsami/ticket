@@ -3,7 +3,7 @@ import {
   DialogContent,
   DialogHeader,
 } from "@/components/ui/dialog"
-import CreateEventForm from "./EventForm"
+import EventForm from "./EventForm"
 
 type EventCreateModalProps = {
   open: boolean
@@ -24,7 +24,7 @@ export default function CreateEventModal({
           className="max-h-[90vh] overflow-y-auto bg-gray-800"
         >
           <DialogHeader className="text-gray-400">
-              <CreateEventForm
+              <EventForm
                 textColor="text-white"
               />
           </DialogHeader>

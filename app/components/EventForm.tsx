@@ -12,10 +12,7 @@ import StarRateIcon from '@mui/icons-material/StarRate';
 import TicketImage from "@/app/components/TicketImage"
 
 import AddIcon from '@mui/icons-material/Add';
-
-// type CreateEventFormProps = {
-//   textColor?: string
-// }
+import ImageModal from "./ImageModal"
 
 type EventFormProps = {
   eventTitle: string
@@ -32,7 +29,10 @@ type EventFormProps = {
   setNote: React.Dispatch<React.SetStateAction<string>>
   songList: string
   setSongList: React.Dispatch<React.SetStateAction<string>>
-
+  ticketImageKey: string | null
+  setTicketImageKey: React.Dispatch<React.SetStateAction<string | null>>
+  ticketImageUrl: string | null
+  setTicketImageUrl: React.Dispatch<React.SetStateAction<string | null>>
   textColor?: string
 }
 
@@ -51,19 +51,21 @@ export default function EventForm({
   setSongList,
   artist,
   setArtist,
+  ticketImageKey,
+  setTicketImageKey,
   textColor = "text-white",
 }: EventFormProps) {
   const router = useRouter()
 
   // page.tsxの方からstateを受け取っているのでstateは削除
   const [comment, setComment] = useState<string[]>([])  // 思い出画像につける
-
-  const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
   const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
   // 存在しない値がある時はstringを使う
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
@@ -153,10 +155,9 @@ export default function EventForm({
 
   return (
     <div className="mt-5 min-w-0 mr-5">
-        <p className="text-xl text-center text-white">ライブ記録を追加</p>
       <div className="flex justify-center mt-3">
         <form onSubmit={handleSubmit}
-          className="w-full min-w-0"
+          className="w-full max-w-xl min-w-0"
         >
           <div className="flex flex-col">
             <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
@@ -292,7 +293,18 @@ export default function EventForm({
             />
             {/* 大きさ調整 */}
             <div className="mx-auto mt-3">
-              <TicketImage url={ticketImageUrl ?? ""} />
+              <TicketImage
+                url={ticketImageUrl ?? ""}
+                width={40}
+                height={40}  
+                onClick={() => setIsModalOpen(true)}
+              />
+
+              <ImageModal
+                open={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                ticketImageUrl={ticketImageUrl}
+              />
             </div>
           </div>
 
@@ -306,8 +318,3 @@ export default function EventForm({
 }
 
 // npm install uuid
-{/* <input
-  type="time"
-  value={startTime}
-  onChange={(e) => setStartTime(e.target.value)}
-/> */}

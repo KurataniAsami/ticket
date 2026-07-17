@@ -17,7 +17,7 @@ type Props = {
 export default function EventItempage({ event }: Props) {
   // ブラウザからアクセスするためのURLをstateに保存
   const [imageUrl, setImageUrl] = useState("")
-console.log(event)
+  
   useEffect(() => {
   if (!event.ticketImageKey) return
 
@@ -51,7 +51,11 @@ console.log(event)
                   height={20}
                 />
               )} */}
-              <TicketImage url={imageUrl} />
+              <TicketImage
+                url={imageUrl}
+                width={60}
+                height={60}
+              />
               
               <div className="flex gap-3">
                 <div className="flex flex-col items-center h-[72px] border border-gray-600 rounded-xl px-3 py-2">

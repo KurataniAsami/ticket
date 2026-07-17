@@ -43,6 +43,7 @@ export default function EditEventPage() {
         setRating(event.rating)
         setNote(event.note)
         setSongList(event.songList)
+        setTicketImageKey(event.ticketImageKey)
       } catch(error) {
         setError(error instanceof Error ? error.message: '既存データの取得に失敗しました')
       } finally {
@@ -62,7 +63,8 @@ export default function EditEventPage() {
       eventDate,
       rating,
       note,
-      songList
+      songList,
+      ticketImageKey,
     }
     
     try {
@@ -101,6 +103,10 @@ export default function EditEventPage() {
         setSongList={setSongList}
         artist={artist}
         setArtist={setArtist}
+        ticketImageKey={ticketImageKey}
+        setTicketImageKey={setTicketImageKey}
+        ticketImageUrl={ticketImageUrl}
+        setTicketImageUrl={setTicketImageUrl}
       />
 
       <div className="flex justify-center mt-5">

@@ -18,6 +18,7 @@ export default function EventCreatePage() {
 
   return (
     <div className="mt-5">
+      <p className="text-xl text-center text-white">ライブ記録を追加</p>
       <EventForm
         eventTitle={eventTitle}
         setEventTitle={setEventTitle}
@@ -33,6 +34,10 @@ export default function EventCreatePage() {
         setNote={setNote}
         songList={songList}
         setSongList={setSongList}
+        ticketImageKey={ticketImageKey}
+        setTicketImageKey={setTicketImageKey}
+        ticketImageUrl={ticketImageUrl}
+        setTicketImageUrl={setTicketImageUrl}
       />
 
       <div className="flex justify-center mt-5">

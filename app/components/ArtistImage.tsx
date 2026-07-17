@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { SpotifyArtist } from "../types/artist";
 import Image from "next/image";
+import { SpotifyArtist } from "../types/artist";
 
 type Props = {
   artist: string[]
@@ -16,6 +16,7 @@ export default function ArtistImage({
     width = 100,
     height = 100,
   }: Props) {
+
   const [artists, setArtists] = useState<SpotifyArtist[]>([])
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(false);
