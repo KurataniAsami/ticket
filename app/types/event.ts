@@ -28,6 +28,7 @@ export type EventDetail = {
   eventTitle?: string
   eventDate: string       
   ticketImageKey?: string
+  memoryImageKey?: string[]
   note?: string
   songList?: string
   rating?: number
@@ -53,4 +54,10 @@ export type EventDetail = {
 // 詳細（APIの型をセット）
 export type EventShowResponse = {
   event: EventDetail
+}
+
+export type MemoryImage = {
+  id: number
+  url: string
+  comment?: string | null
 }
