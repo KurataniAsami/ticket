@@ -16,6 +16,7 @@ export type CreateEventRequestBody = {
   songList?: string
   comment?: string[]
   ticketImageKey?: string
+  memoryImageKey?: string[]
   artist: string[]
 }
 
@@ -48,7 +49,7 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   try {
     const body : CreateEventRequestBody = await request.json()
-    const { eventTitle, place, eventDate, rating, note, songList, ticketImageKey } = body
+    const { eventTitle, place, eventDate, rating, note, songList, ticketImageKey, memoryImageKey } = body
     const { artist: artistNames = [] } = body
 
     // 同じplaceがなければ作成(同一の会場でもレコードが重複しないようにする)
@@ -98,7 +99,14 @@ export const POST = async (request: NextRequest) => {
           connect: artistRecords.map((artist) => ({
             id: artist.id,
           }))
-        }
+        },
+
+        eventImages: {
+          create: (memoryImageKey ?? []).map((key) => ({
+            url: key,
+          })),
+        },
+        
       },
     })
 
