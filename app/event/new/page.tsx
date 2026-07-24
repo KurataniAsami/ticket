@@ -13,8 +13,13 @@ export default function EventCreatePage() {
   const [songList, setSongList] = useState('')
   const [comment, setComment] = useState<string[]>([])  // 思い出画像につける
 
+  // チケット画像
   const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
   const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
+
+  // 思い出画像
+  const [memoryImageKey, setMemoryImageKey] = useState<string[]>([])
+  const [memoryImageUrl, setMemoryImageUrl] = useState<string[]>([])
 
   return (
     <div className="mt-5">
@@ -38,16 +43,14 @@ export default function EventCreatePage() {
         setTicketImageKey={setTicketImageKey}
         ticketImageUrl={ticketImageUrl}
         setTicketImageUrl={setTicketImageUrl}
+        memoryImageKey={memoryImageKey}
+        setMemoryImageKey={setMemoryImageKey}
+        memoryImageUrl={memoryImageUrl}
+        setMemoryImageUrl={setMemoryImageUrl}
+        SubmitButton={true}
       />
 
-      <div className="flex justify-center mt-5">
-        <button
-          type="submit"
-          className="bg-pink-400 px-3 py-2 rounded text-white hover:bg-pink-500"
-        >
-          登録
-        </button>
-      </div>
+      
     </div>
   )
 }

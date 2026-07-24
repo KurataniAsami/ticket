@@ -1,7 +1,6 @@
 // アーティスト一覧
 'use client'
 
-import Link from "next/link"
 import { useEffect, useState } from "react"
 import { ArtistIndexResponse } from "../api/artist/route"
 import ArtistCard from "../components/ArtistCard"
@@ -33,16 +32,11 @@ export default function ArtistListPage() {
       <p className="text-xl my-3">アーティスト一覧</p>
       <div className="flex flex-wrap gap-3">
         {artists.map((artist) => (
-          <Link
-            href={`/api/artist/${artist.id}`}
-            key={artist.id}  
-          >
-            <div>
+            <div key={artist.id}>
               <ArtistCard
                 artist={artist}
               />
             </div>
-          </Link>
         ))}
       </div>
     </div>

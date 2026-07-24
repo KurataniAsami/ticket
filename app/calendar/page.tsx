@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { Calendar } from "../components/Calendar"
-import { EventList } from "../types/event"
-import { Card,CardContent } from "@/components/ui/card"
 import Link from "next/link"
-import EventCreateDrawer from "../components/EventCreateDrawer"
+import { EventList } from "../types/event"
+import { Calendar } from "../components/Calendar"
+import CreateEventModal from "../components/CreateEventModal"
+import { Card,CardContent } from "@/components/ui/card"
 
 export type EventProps = {
   events: EventList[]
@@ -14,6 +14,8 @@ export type EventProps = {
 export default function CalendarPage() {
   const [events, setEvents] = useState<EventList[]>([])
   const [loadins, setLoading] = useState(true)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
       const getAllEvent = async () => {
@@ -25,6 +27,7 @@ export default function CalendarPage() {
   
       getAllEvent()
     },[])
+
   return (
     <div className="my-5 mr-5">
       <div className="flex justify-between mb-5">
@@ -37,18 +40,21 @@ export default function CalendarPage() {
         </Link>
       </div>
       
-      <div className="flex gap-4 items-start">
-        
 
         <Card className="flex-1 bg-gray-900 text-white">
           <CardContent>
-            <Calendar events={events} />
+            <Calendar
+              events={events} 
+              onDateClick={() => setIsModalOpen(true)}
+            />
           </CardContent>
         </Card>
 
-        <EventCreateDrawer />
-      </div>
-      {/* カレンダーではなくフォームが縮むように */}
+        <CreateEventModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+
     </div>
   )
 }
