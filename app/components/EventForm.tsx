@@ -6,13 +6,16 @@ import { supabase } from "@/app/libs/supabase"
 import { v4 as uuidv4 } from 'uuid'  // ticketImageKeyを一意に作成
 
 import { CreateEventRequestBody } from "@/app/api/event/route"
+import { MemoryImage } from "../types/event"
 
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import StarRateIcon from '@mui/icons-material/StarRate';
 import TicketImage from "@/app/components/TicketImage"
+import TicketImageModal from "./TicketImageModal"
 
 import AddIcon from '@mui/icons-material/Add';
-import ImageModal from "./ImageModal"
+import MemoryImageCard from "./MemoryImageCard"
+import MemoryImageModal from "./MemoryImageModal"
 
 type EventFormProps = {
   eventTitle: string
@@ -29,11 +32,26 @@ type EventFormProps = {
   setNote: React.Dispatch<React.SetStateAction<string>>
   songList: string
   setSongList: React.Dispatch<React.SetStateAction<string>>
+
+  // 1枚しか扱わない場合はstring | null
   ticketImageKey: string | null
   setTicketImageKey: React.Dispatch<React.SetStateAction<string | null>>
   ticketImageUrl: string | null
   setTicketImageUrl: React.Dispatch<React.SetStateAction<string | null>>
-  textColor?: string
+
+  memoryImageKey: string[]
+  setMemoryImageKey: React.Dispatch<React.SetStateAction<string[]>>
+  memoryImageUrl: string[]
+  setMemoryImageUrl: React.Dispatch<React.SetStateAction<string[]>>
+  memoryImages?: MemoryImage[]
+
+  // 選択した思い出画像のみモーダル
+  selectedImage: string | null
+  setSelectedImage: React.Dispatch<React.SetStateAction<string | null>>
+
+  textColor?: string   // modal
+  SubmitButton?: boolean   // 作成ページのみボタン表示
+  editMessage?: string  // editページのみ、テキスト挿入
 }
 
 export default function EventForm({
@@ -53,19 +71,31 @@ export default function EventForm({
   setArtist,
   ticketImageKey,
   setTicketImageKey,
-  textColor = "text-white",
+  memoryImageKey,
+  setMemoryImageKey,
+  ticketImageUrl,
+  setTicketImageUrl,
+  setMemoryImageUrl,
+  memoryImages,  // 既存画像を表示するだけなのでsetMemoryImagesのみ渡す
+  textColor = "text-white",  // modal
+  SubmitButton,   // 作成ページのみボタン表示
+  editMessage  // editページのみ、テキスト挿入
 }: EventFormProps) {
   const router = useRouter()
 
   // page.tsxの方からstateを受け取っているのでstateは削除
   const [comment, setComment] = useState<string[]>([])  // 思い出画像につける
-  const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
   // 存在しない値がある時はstringを使う
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  // モーダル
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false)
+  const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false)
+
+  // 選択した思い出画像だけモーダル表示する
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
@@ -80,7 +110,8 @@ export default function EventForm({
       note,
       songList,
       place,
-      ticketImageKey: ticketImageKey ?? undefined   // 画像なしの場合はnullで保存
+      ticketImageKey: ticketImageKey ?? undefined,   // 画像なしの場合はnullで保存
+      memoryImageKey: memoryImageKey,
     }
 
     try {
@@ -89,10 +120,6 @@ export default function EventForm({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       })
-
-      if(!res.ok) {
-        throw new Error('登録に失敗しました')
-      }
 
       router.push("/")
     } catch(error) {
@@ -123,12 +150,12 @@ export default function EventForm({
       })
 
     if(error) {
-      alert(error.message)
+      error instanceof Error
       return
     }
 
     // data.pathに、画像固有のkeyが入っているので、stateに格納する
-    setTicketImageKey(data.path)
+    setTicketImageKey(data.path)  // newにある
   }
 
   useEffect(() => {
@@ -146,6 +173,51 @@ export default function EventForm({
 
     fetcher()
   },[ticketImageKey])
+
+  // 思い出画像のアップロード(配列)
+  const handleMemoryImage = async (
+    event: ChangeEvent<HTMLInputElement>,
+  ): Promise<void> => {
+    if (!event.target.files || event.target.files.length == 0) {
+      return
+    }
+
+    const file = event.target.files[0]
+
+    const filePath = `private/${uuidv4()}` // ticketImageKeyにあるStrage内のファイルキー
+
+    // Supabaseに画像をアップロード
+    const { data, error } = await supabase.storage
+      .from('memory_image')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      })
+
+    if(error) {
+      error instanceof Error
+      return
+    }
+
+    // data.pathに、画像固有のkeyが入っているので、stateに格納する
+    setMemoryImageKey((prev) => [...prev, data.path])
+  }
+
+  useEffect(() => {
+    if (memoryImageKey.length === 0) return
+
+    const urls = memoryImageKey.map((key) => {
+      const {
+        data: { publicUrl },
+      } = supabase.storage
+        .from('memory_image')
+        .getPublicUrl(key)
+
+      return publicUrl
+    })
+
+    setMemoryImageUrl(urls)
+  }, [memoryImageKey])
 
   // アーティスト追加
   const addArtistField = () => {
@@ -230,7 +302,6 @@ export default function EventForm({
             />
           </div>
 
-{/* コンポーネントある */}
           <div className="flex flex-col mt-5">
             <label className={`text-gray-400 text-sm mb-1 ${textColor}`}>
               評価<span className="text-gray-300 ml-2">(任意)</span>
@@ -283,7 +354,7 @@ export default function EventForm({
               htmlFor="ticketImageKey"
               className={`text-gray-400 text-sm mb-1 ${textColor}`}
             >
-              チケット画像
+              チケット画像(1枚のみ)
             </label>
             <input
               type="file"
@@ -291,26 +362,77 @@ export default function EventForm({
               accept="image/*"
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
-            {/* 大きさ調整 */}
             <div className="mx-auto mt-3">
               <TicketImage
                 url={ticketImageUrl ?? ""}
                 width={40}
                 height={40}  
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsTicketModalOpen(true)}
               />
 
-              <ImageModal
-                open={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+              <TicketImageModal
+                open={isTicketModalOpen}
+                onClose={() => setIsTicketModalOpen(false)}
                 ticketImageUrl={ticketImageUrl}
               />
             </div>
           </div>
 
           {/* 思い出画像 */}
+          <div className="flex flex-col mt-5">
+            <label
+              htmlFor="memoryImageKey"
+              className={`text-gray-400 text-sm mb-1 ${textColor}`}
+            >
+              思い出画像
+              {/* editページのみのテキスト */}
+              {editMessage && (
+                <div className="flex items-center gap-1 mt-2">
+                  <p>{editMessage}</p>
+                  <AddIcon className="text-green-400"/>
+                </div>
+              )}
+            </label>
+            <input
+              type="file"
+              onChange={handleMemoryImage}
+              accept="image/*"
+              className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
+            />
+           
+            <div className="flex flex-wrap">
+              {memoryImages?.map((image) => (
+                <MemoryImageCard
+                  key={image.id}
+                  url={image.url}
+                  width={40}
+                  height={40}  
+                  onClick={() => {
+                    setSelectedImage(image.url)
+                    setIsMemoryModalOpen(true)
+                  }}
+                />
+              ))}
 
-          
+              <MemoryImageModal
+                open={isMemoryModalOpen}
+                onClose={() => setIsMemoryModalOpen(false)}
+                selectedImage={selectedImage}
+              />
+            </div>
+          </div>
+
+          {/* propsの受け渡しはここだけ、falseのpageは何もしない */}
+          {SubmitButton && (
+            <div className="flex justify-center mt-5">
+            <button
+              type="submit"
+              className="bg-pink-400 px-3 py-2 mb-5 rounded text-white hover:bg-pink-500"
+            >
+              登録
+            </button>
+          </div>
+          )}
         </form>
       </div>
     </div>
