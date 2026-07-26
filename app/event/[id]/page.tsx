@@ -2,13 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import { supabase } from "@/app/libs/supabase";
 
-import { EventDetail } from "@/app/types/event"
+import { EventDetail, MemoryImage } from "@/app/types/event"
 import { SpotifyArtist } from "@/app/types/artist";
 
 import StarRating from "@/app/components/Stars";
-import EventImageCard from "@/app/components/EventImageCard";
+import MemoryImageCard from "@/app/components/MemoryImageCard";
 import ArtistImage from "@/app/components/ArtistImage";
+import TicketImage from "@/app/components/TicketImage";
 
 import ArticleIcon from '@mui/icons-material/Article';
 import MicIcon from '@mui/icons-material/Mic';
@@ -17,7 +20,6 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CreateIcon from '@mui/icons-material/Create';
 import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import Link from "next/link";
 
 export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +27,15 @@ export default function EventDetailPage() {
 
   const [event, setEvent] = useState<EventDetail | null>(null)
   const [artist, setArtist] = useState<SpotifyArtist[]>([])
+
+  // チケット画像
+  const [imageUrl, setImageUrl] = useState("")
+
+  // 思い出画像
+  // keyとurlを含んでオブジェクトにしたstate
+  const [memoryImages, setMemoryImages] = useState<MemoryImage[]>([])
+  const [memoryImageUrl, setMemoryImageUrl] = useState<string[]>([])
+  
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(false);
 
@@ -32,9 +43,10 @@ export default function EventDetailPage() {
     const getEvent = async () => {
       try {
         const response = await fetch(`/api/event/${id}`)
-
         const data = await response.json()
+
         setEvent(data.event)
+
       } catch(error) {
         setError(true)
       } finally {
@@ -43,34 +55,71 @@ export default function EventDetailPage() {
     }
 
     getEvent()
-  },[id])
+  }, [id])
 
-  // spotify APIからアーティスト画像を取得
+  // チケット画像
   useEffect(() => {
-    if(!event?.artist) return  
+    if (!event) return
+    if (!event.ticketImageKey) return  // ticketImageKeyはformのlabel
+  
+    // ImageKeyをPublicURLに変換
+    const {
+      data: { publicUrl },
+    } = supabase.storage
+      .from("ticket_image")
+      .getPublicUrl(event.ticketImageKey)
+  
+    setImageUrl(publicUrl)
+  }, [event?.ticketImageKey])
 
-    const getArtistImage = async () => {
-    try {
-      const artists = await Promise.all(
-        event.artist.map(async (eArtist) => {
-          const response = await fetch(
-            `/api/spotify/artist?artist=${encodeURIComponent(eArtist.name)}`
-          )
+  // 思い出画像(配列)
+  useEffect(() => {
+    if (!event) return
 
-          return response.json()
-        })
-      )
+    const images = event.eventImages.map((image) => {
+      const {
+        data: { publicUrl },
+      } = supabase.storage
+        .from("memory_image")
+        .getPublicUrl(image.url)
 
-      setArtist(artists)
-    } catch (error) {
-      setError(true)
-    } finally {
-      setLoading(false)
+      return {
+        id: image.id,
+        url: publicUrl,
+        comment: image.comment
+      }
+    })
+
+    setMemoryImages(images)
+    setMemoryImageUrl(images.map((image) => image.url))
+    }, [event])
+
+    // spotify APIからアーティスト画像を取得
+    useEffect(() => {
+      if(!event?.artist) return  
+
+      const getArtistImage = async () => {
+      try {
+        const artists = await Promise.all(
+          event.artist.map(async (eArtist) => {
+            const response = await fetch(
+              `/api/spotify/artist?artist=${encodeURIComponent(eArtist.name)}`
+            )
+
+            return response.json()
+          })
+        )
+
+        setArtist(artists)
+      } catch (error) {
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
     }
-  }
 
-    getArtistImage()
-  },[event])
+      getArtistImage()
+    },[event])
   
 
   if(loading) return <p>Loading...</p>
@@ -80,7 +129,7 @@ export default function EventDetailPage() {
   return (
     <div>
       <div className="flex items-center gap-5 mt-5 mb-3 pb-3">
-        <div className="flex justify-end w-full">
+        <div className="flex justify-end w-full mr-5">
           <Link
             href={`/event/${id}/edit/`}
             className="flex gap-1 border border-green-400 rounded-full px-4 py-2"
@@ -92,17 +141,16 @@ export default function EventDetailPage() {
             <p className="text-green-400">編集</p>
           </Link>
         </div>
-
-        <div>
-          {/* {event.ticketImageKey && (
-            <Image
-              src={event.ticketImageKey}
-              alt="チケット画像"
-              width={40}
-              height={20}
-            />
-            )} */}
-        </div>
+      </div>
+      
+      <div className="flex justify-center mb-5">
+        {event.ticketImageKey && (
+          <TicketImage
+            url={imageUrl} 
+            width={300}
+            height={200}
+          />
+        )}
       </div>
 
       <div className="flex flex-col">
@@ -183,21 +231,22 @@ export default function EventDetailPage() {
           <p className="text-xl">{event.songList}</p>
         </div>
 
-        {/* ギャラリー */}
-        <div className="flex items-start w-120 mb-4 flex-col">
-          <div className="w-30 mb-3">
-            <CameraAltIcon/>
-          </div>
-          
-          <div className="flex gap-3">
-            {event.eventImages?.map((image) => (
-              <EventImageCard
-                key={image.id}
-                url={image.url}
-                comment={image.comment}
-              />
-            ))}
-          </div>
+        {/* 思い出画像 */}
+        <div className="w-120 flex items-start">
+          <CameraAltIcon/>
+        </div>
+        <div className="flex  gap-5 flex-wrap justify-center max-w-[900px] mt-3">
+          {memoryImages.map((image) => (
+            <MemoryImageCard
+              key={image.id}   // これがあるので<div>にkeyは不要
+              url={image.url}
+              comment={image.comment}
+              width={400}
+              height={200}
+              cardWidth="w-[400px]"
+              ShowComment={true}
+            />
+          ))}
         </div>
       </div>
     </div>
@@ -206,4 +255,3 @@ export default function EventDetailPage() {
 // 画像添付　import CameraAltIcon from '@mui/icons-material/CameraAlt';
 // note import ModeEditIcon from '@mui/icons-material/ModeEdit';
 // 評価機能（★５段階）、実装検討, フォームはカメラアイコン
-// 画像クリックで拡大表示

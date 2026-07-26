@@ -8,38 +8,46 @@ import {
 type Props = {
   url: string
   comment?: string | null
-  // open: boolean
-  // onClose: () => void
   memoryImageUrl?: string[]
+  width: number
+  height: number
+  onClick?: () => void
+  cardWidth?: string   // 詳細ページのみ大きさ変える
+  ShowComment?: boolean  // 作成ページと詳細ページのみ、画像コメント表示
 }
 
 export default function MemoryImageCard({
     url,
     comment,
-    // open,
-    // onClose,
+    width = 200,
+    height = 200,
+    onClick,
+    cardWidth = "w-auto",
+    ShowComment   // 作成ページと詳細ページのみ、画像コメント表示
   }:Props) {
-
 
   return (
     <Card
-      className="w-[320px] bg-gray-900"
+      className={`${cardWidth} bg-gray-900 my-2`}
     >
       <CardContent className="flex flex-col">
         <Image
           src={url}
           alt={comment ?? "思い出の画像"}
-          width={300}
-          height={200}
+          width={width}
+          height={height}
           className="rounded"
+          onClick={onClick}
         />
         
-        <div className="flex items-center gap-2">
+        {ShowComment && (
+          <div className="flex items-center gap-2">
           <ChatBubbleIcon
             className="mt-3 text-white"
           />
           <p className="mt-2 text-white">{comment}</p>
         </div>
+        )}
       </CardContent>
     </Card>
   )

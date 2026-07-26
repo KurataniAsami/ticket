@@ -52,6 +52,7 @@ type EventFormProps = {
   textColor?: string   // modal
   SubmitButton?: boolean   // 作成ページのみボタン表示
   editMessage?: string  // editページのみ、テキスト挿入
+  ShowComment?: boolean
 }
 
 export default function EventForm({
@@ -79,7 +80,8 @@ export default function EventForm({
   memoryImages,  // 既存画像を表示するだけなのでsetMemoryImagesのみ渡す
   textColor = "text-white",  // modal
   SubmitButton,   // 作成ページのみボタン表示
-  editMessage  // editページのみ、テキスト挿入
+  editMessage,  // editページのみ、テキスト挿入
+  ShowComment
 }: EventFormProps) {
   const router = useRouter()
 
@@ -400,16 +402,18 @@ export default function EventForm({
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
            
-            <div className="flex flex-wrap">
+            <div className="flex justify-center flex-wrap gap-5 mt-5">
               {memoryImages?.map((image) => (
                 <MemoryImageCard
                   key={image.id}
                   url={image.url}
-                  width={40}
+                  width={200}
                   height={40}  
+                  ShowComment={true}
                   onClick={() => {
                     setSelectedImage(image.url)
                     setIsMemoryModalOpen(true)
+                    
                   }}
                 />
               ))}
@@ -418,6 +422,7 @@ export default function EventForm({
                 open={isMemoryModalOpen}
                 onClose={() => setIsMemoryModalOpen(false)}
                 selectedImage={selectedImage}
+                ShowComment={true}
               />
             </div>
           </div>
