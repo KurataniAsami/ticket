@@ -5,7 +5,6 @@ import {
   CardContent,
 } from "@/components/ui/card"
 import CloseIcon from '@mui/icons-material/Close';
-import MemoryDeleteModal from './MemoryDeleteModal';
 
 type Props = {
   url: string
@@ -21,6 +20,7 @@ type Props = {
   ShowCommentForm?: boolean  // 作成ページと詳細ページのみ、画像コメント表示
   CommnetText?: boolean
   CloseButton: boolean
+  onDelete?: () => void
 }
 
 export default function MemoryImageCard({
@@ -34,7 +34,8 @@ export default function MemoryImageCard({
     ShowCommentForm,
     CommnetText,
     cardWidth = "w-auto",
-    CloseButton
+    CloseButton,
+    onDelete,
   }:Props) {
 
   return (
@@ -48,17 +49,11 @@ export default function MemoryImageCard({
             <div className='flex justify-end'>
               <CloseIcon
                 className='text-red-500'
-                onClick = {() => setIsMemoryDeletOpen(true)}  
+                onClick={onDelete} 
               />
             </div>
-
-            <MemoryDeleteModal
-              open={isMemoryDeleteOpen}
-              onDelete={handleMemoryDelete}
-            />
           </div>
         )}
-        
         
         <Image
           src={url}

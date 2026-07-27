@@ -16,6 +16,7 @@ import TicketImageModal from "./TicketImageModal"
 import AddIcon from '@mui/icons-material/Add';
 import MemoryImageCard from "./MemoryImageCard"
 import MemoryImageModal from "./MemoryImageModal"
+import MemoryDeleteModal from "./MemoryDeleteModal"
 
 type EventFormProps = {
   eventTitle: string
@@ -43,16 +44,22 @@ type EventFormProps = {
   setMemoryImageKey: React.Dispatch<React.SetStateAction<string[]>>
   memoryImageUrl: string[]
   setMemoryImageUrl: React.Dispatch<React.SetStateAction<string[]>>
-  memoryImages?: MemoryImage[]
+  memoryImages: MemoryImage[]
+  setMemoryImages: React.Dispatch<React.SetStateAction<MemoryImage[]>>
 
   // 選択した思い出画像のみモーダル
   selectedImage: string | null
   setSelectedImage: React.Dispatch<React.SetStateAction<string | null>>
 
+  isMemoryDeleteOpen: boolean
+  setIsMemoryDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>
+
   textColor?: string   // modal
   SubmitButton?: boolean   // 作成ページのみボタン表示
   editMessage?: string  // editページのみ、テキスト挿入
-  ShowComment?: boolean
+  ShowCommentForm?: boolean
+  CloseButton? : boolean
+  onDelete?: () => void
 }
 
 export default function EventForm({
@@ -77,17 +84,18 @@ export default function EventForm({
   ticketImageUrl,
   setTicketImageUrl,
   setMemoryImageUrl,
-  memoryImages,  // 既存画像を表示するだけなのでsetMemoryImagesのみ渡す
+  memoryImages,  
+  setMemoryImages,
+  selectedImage,
+  setSelectedImage,
   textColor = "text-white",  // modal
   SubmitButton,   // 作成ページのみボタン表示
   editMessage,  // editページのみ、テキスト挿入
-  ShowComment
 }: EventFormProps) {
   const router = useRouter()
 
   // page.tsxの方からstateを受け取っているのでstateは削除
-  const [comment, setComment] = useState<string[]>([])  // 思い出画像につける
-  // 存在しない値がある時はstringを使う
+  
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -96,8 +104,9 @@ export default function EventForm({
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false)
   const [isMemoryModalOpen, setIsMemoryModalOpen] = useState(false)
 
-  // 選択した思い出画像だけモーダル表示する
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  // 思い出画像の削除モーダル
+  const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
+  const [deleteImageId, setDeleteImageId] = useState<number | null>(null)
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
@@ -114,6 +123,7 @@ export default function EventForm({
       place,
       ticketImageKey: ticketImageKey ?? undefined,   // 画像なしの場合はnullで保存
       memoryImageKey: memoryImageKey,
+      memoryImages  // コメント
     }
 
     try {
@@ -201,8 +211,25 @@ export default function EventForm({
       return
     }
 
+    const {
+      data: { publicUrl },
+    } = supabase.storage
+      .from('memory_image')
+      .getPublicUrl(data.path)
+
     // data.pathに、画像固有のkeyが入っているので、stateに格納する
     setMemoryImageKey((prev) => [...prev, data.path])
+
+    // コメント保存
+    setMemoryImages((prev) => [
+      ...prev,
+      {
+        id: Date.now(),
+        key: data.path,
+        url: publicUrl,   // storageのキーを保存する
+        comment: "",
+      },
+    ])
   }
 
   useEffect(() => {
@@ -225,6 +252,39 @@ export default function EventForm({
   const addArtistField = () => {
     if (artist.length >= 3) return
     setArtist((prev) => [...prev, ""])
+  }
+
+  // コメント
+  const handleCommentChange = (
+  id: number,
+  comment: string
+  ) => {
+  setMemoryImages((prev) =>
+    prev.map((image) =>
+      image.id === id
+        ? { ...image, comment }
+        : image
+    )
+  )
+  }
+
+  // 思い出画像（コメント）も削除
+  const handleDeleteClick = (id: number) => {
+    setDeleteImageId(id)
+    setIsMemoryDeleteOpen(true)
+  }
+
+  // 削除確定
+  const handleMemoryDelete = () => {
+    if (deleteImageId === null) return
+
+    setMemoryImages((prev) =>
+      prev.filter((image) => image.id !== deleteImageId)
+    )
+
+    // 削除完了後、初期状態に戻す（モーダル閉じる）
+    setIsMemoryDeleteOpen(false)
+    setDeleteImageId(null)
   }
 
   return (
@@ -364,10 +424,10 @@ export default function EventForm({
               accept="image/*"
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
-            <div className="mx-auto mt-3">
+            <div className="mx-auto mt-5">
               <TicketImage
                 url={ticketImageUrl ?? ""}
-                width={40}
+                width={150}
                 height={40}  
                 onClick={() => setIsTicketModalOpen(true)}
               />
@@ -402,20 +462,31 @@ export default function EventForm({
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
            
-            <div className="flex justify-center flex-wrap gap-5 mt-5">
+            <div className="flex justify-center flex-wrap gap-5 mt-3">
               {memoryImages?.map((image) => (
-                <MemoryImageCard
-                  key={image.id}
-                  url={image.url}
-                  width={200}
-                  height={40}  
-                  ShowComment={true}
-                  onClick={() => {
-                    setSelectedImage(image.url)
-                    setIsMemoryModalOpen(true)
-                    
-                  }}
-                />
+                <div key={image.id}>
+                  <MemoryImageCard
+                    key={image.id}
+                    url={image.url}
+                    width={150}
+                    height={40}  
+                    comment={image.comment}
+                    ShowCommentForm={true}
+                    CloseButton={true}
+                    onClick={() => {
+                      setSelectedImage(image.url)
+                      setIsMemoryModalOpen(true)
+                      
+                    }}
+
+                    onCommentChange={(value) =>
+                      handleCommentChange(image.id, value)
+                    }
+
+                    // inDeleteは発火場所
+                    onDelete={() => handleDeleteClick(image.id)}
+                  />
+                </div>
               ))}
 
               <MemoryImageModal
@@ -423,6 +494,12 @@ export default function EventForm({
                 onClose={() => setIsMemoryModalOpen(false)}
                 selectedImage={selectedImage}
                 ShowComment={true}
+              />
+
+              <MemoryDeleteModal
+                open={isMemoryDeleteOpen}
+                onClose={() => setIsMemoryDeleteOpen(false)}
+                onDelete={handleMemoryDelete}
               />
             </div>
           </div>
