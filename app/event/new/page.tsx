@@ -1,6 +1,7 @@
 'use client'
 import { useState } from "react"
 import EventForm from "@/app/components/EventForm"
+import { MemoryImage } from "@/app/types/event"
 
 export default function EventCreatePage() {
   const [eventTitle, setEventTitle] = useState('')
@@ -11,7 +12,6 @@ export default function EventCreatePage() {
   const [rating, setRating] = useState(0)
   const [note, setNote] = useState('')
   const [songList, setSongList] = useState('')
-  const [comment, setComment] = useState<string[]>([])  // 思い出画像につける
 
   // チケット画像
   const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
@@ -20,6 +20,8 @@ export default function EventCreatePage() {
   // 思い出画像
   const [memoryImageKey, setMemoryImageKey] = useState<string[]>([])
   const [memoryImageUrl, setMemoryImageUrl] = useState<string[]>([])
+  const [memoryImages, setMemoryImages] = useState<MemoryImage[]>([])  // コメント込み
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   return (
     <div className="mt-5">
@@ -48,6 +50,10 @@ export default function EventCreatePage() {
         memoryImageUrl={memoryImageUrl}
         setMemoryImageUrl={setMemoryImageUrl}
         SubmitButton={true}
+        memoryImages={memoryImages}
+        setMemoryImages={setMemoryImages}
+        selectedImage={selectedImage}
+        setSelectedImage={setSelectedImage}
       />
 
       

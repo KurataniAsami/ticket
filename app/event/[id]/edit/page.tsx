@@ -23,7 +23,7 @@ export default function EditEventPage() {
   const [rating, setRating] = useState(0)
   const [note, setNote] = useState('')
   const [songList, setSongList] = useState('')
-  const [comment, setComment] = useState<string[]>([])  // 思い出画像につける
+  const [comment, setComment] = useState<string | null>(null)  // 思い出画像につける
 
   const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
   const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
@@ -36,8 +36,11 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // モーダル
+  // 削除モーダル
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
+  const [deleteImageId, setDeleteImageId] = useState<number | null>(null)
+
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
@@ -83,6 +86,7 @@ export default function EditEventPage() {
 
     return {
       id: image.id,
+      key: image.url,
       url: publicUrl,
       comment: image.comment,
     }
@@ -104,7 +108,8 @@ export default function EditEventPage() {
       note,
       songList,
       ticketImageKey,
-      memoryImageKey
+      memoryImageKey,
+      memoryImages
     }
     
     try {
@@ -133,6 +138,8 @@ export default function EditEventPage() {
       setError(error instanceof Error ? error.message: '削除に失敗')
     }
   }
+
+  
 
   if(loading) return <p>loading...</p>
   return (
@@ -164,10 +171,14 @@ export default function EditEventPage() {
         memoryImageUrl={memoryImageUrl}
         setMemoryImageUrl={setMemoryImageUrl}
         memoryImages={memoryImages}
+        setMemoryImages={setMemoryImages}
         editMessage="新しい写真を追加"  // editページのみ、テキスト挿入
         selectedImage={selectedImage}
         setSelectedImage={setSelectedImage}
-        ShowComment={true}
+        ShowCommentForm={true}
+        CloseButton={true}
+        isMemoryDeleteOpen={isMemoryDeleteOpen}
+        setIsMemoryDeleteOpen={setIsMemoryDeleteOpen}
       />
 
       <div className="flex justify-center gap-5 my-5">

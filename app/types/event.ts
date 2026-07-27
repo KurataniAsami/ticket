@@ -58,6 +58,7 @@ export type EventShowResponse = {
 
 export type MemoryImage = {
   id: number
-  url: string
+  key: string   // DB保存用
+  url: string   // 画面表示用
   comment?: string | null
 }
