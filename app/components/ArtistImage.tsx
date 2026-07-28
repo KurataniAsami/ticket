@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { SpotifyArtist } from "../types/artist";
@@ -51,13 +52,13 @@ export default function ArtistImage({
     <div className="flex gap-3">
       {artists.map((artistData) => (
         <div key={artistData.spotifyUrl}>
-            <Image
-              src={artistData.imageUrl}
-              alt={artistData.name}
-              width={width}
-              height={height}
-              className={rounded ? "rounded-full" : ""}
-            />
+          <Image
+            src={artistData.imageUrl}
+            alt={artistData.name}
+            width={width}
+            height={height}
+            className={rounded ? "rounded-full" : ""}
+          />
         </div>
       ))}
     </div>

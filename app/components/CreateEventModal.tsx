@@ -7,15 +7,51 @@ import {
   DialogContent,
   DialogHeader,
 } from "@/components/ui/dialog"
+import { MemoryImage } from "../types/event"
 
 type EventCreateModalProps = {
-  open: boolean
+  eventTitle: string
+  setEventTitle: React.Dispatch<React.SetStateAction<string>>
+  artist: string[]
+  setArtist: React.Dispatch<React.SetStateAction<string[]>>
+  place: string
+  setPlace: React.Dispatch<React.SetStateAction<string>>
+  eventDate: string
+  setEventDate: React.Dispatch<React.SetStateAction<string>>
+  rating: number
+  setRating: React.Dispatch<React.SetStateAction<number>>
+  note: string
+  setNote: React.Dispatch<React.SetStateAction<string>>
+  songList: string
+  setSongList: React.Dispatch<React.SetStateAction<string>>
+
+  // 1枚しか扱わない場合はstring | null
+  ticketImageKey: string | null
+  setTicketImageKey: React.Dispatch<React.SetStateAction<string | null>>
+  ticketImageUrl: string | null
+  setTicketImageUrl: React.Dispatch<React.SetStateAction<string | null>>
+
+  memoryImageKey: string[]
+  setMemoryImageKey: React.Dispatch<React.SetStateAction<string[]>>
+  memoryImageUrl: string[]
+  setMemoryImageUrl: React.Dispatch<React.SetStateAction<string[]>>
+
+
+  textColor?: string   // modal
+  SubmitButton?: boolean   // 作成ページのみボタン表示
+  editMessage?: string  // editページのみ、テキスト挿入
+  ShowCommentForm?: boolean
+  CloseButton? : boolean
   onClose: () => void
 }
 
 export default function CreateEventModal({
   open,
   onClose,
+  memoryImageKey,
+  setMemoryImageKey,
+  memoryImageUrl,
+  setMemoryImageUrl,
 }: EventCreateModalProps) {
 
   const [eventTitle, setEventTitle] = useState('')
@@ -26,7 +62,6 @@ export default function CreateEventModal({
     const [rating, setRating] = useState(0)
     const [note, setNote] = useState('')
     const [songList, setSongList] = useState('')
-    const [comment, setComment] = useState<string[]>([])  
   
     const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
     const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
@@ -41,27 +76,31 @@ export default function CreateEventModal({
           className="max-h-[90vh] overflow-y-auto bg-gray-800"
         >
           <DialogHeader className="text-gray-400">
-              <EventForm
-                textColor="text-white"
-                eventTitle={eventTitle}
-                setEventTitle={setEventTitle}
-                place={place}
-                setPlace={setPlace}
-                eventDate={eventDate}
-                setEventDate={setEventDate}
-                rating={rating}
-                setRating={setRating}
-                note={note}
-                setNote={setNote}
-                songList={songList}
-                setSongList={setSongList}
-                artist={artist}
-                setArtist={setArtist}
-                ticketImageKey={ticketImageKey}
-                setTicketImageKey={setTicketImageKey}
-                ticketImageUrl={ticketImageUrl}
-                setTicketImageUrl={setTicketImageUrl}
-              />
+            <EventForm
+              textColor="text-white"
+              eventTitle={eventTitle}
+              setEventTitle={setEventTitle}
+              place={place}
+              setPlace={setPlace}
+              eventDate={eventDate}
+              setEventDate={setEventDate}
+              rating={rating}
+              setRating={setRating}
+              note={note}
+              setNote={setNote}
+              songList={songList}
+              setSongList={setSongList}
+              artist={artist}
+              setArtist={setArtist}
+              ticketImageKey={ticketImageKey}
+              setTicketImageKey={setTicketImageKey}
+              ticketImageUrl={ticketImageUrl}
+              setTicketImageUrl={setTicketImageUrl}
+              memoryImageKey={memoryImageKey}
+              setMemoryImageKey={setMemoryImageKey}
+              memoryImageUrl={memoryImageUrl}
+              setMemoryImageUrl={setMemoryImageUrl}
+            />
           </DialogHeader>
         </DialogContent>
       </Dialog>
