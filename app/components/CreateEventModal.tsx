@@ -36,13 +36,13 @@ type EventCreateModalProps = {
   memoryImageUrl: string[]
   setMemoryImageUrl: React.Dispatch<React.SetStateAction<string[]>>
 
-
   textColor?: string   // modal
   SubmitButton?: boolean   // 作成ページのみボタン表示
   editMessage?: string  // editページのみ、テキスト挿入
   ShowCommentForm?: boolean
   CloseButton? : boolean
   onClose: () => void
+  open: boolean
 }
 
 export default function CreateEventModal({
@@ -55,16 +55,16 @@ export default function CreateEventModal({
 }: EventCreateModalProps) {
 
   const [eventTitle, setEventTitle] = useState('')
-    const [artist, setArtist] = useState<string[]>([""])
-  
-    const [place, setPlace] = useState<string>('')
-    const [eventDate, setEventDate] = useState('')
-    const [rating, setRating] = useState(0)
-    const [note, setNote] = useState('')
-    const [songList, setSongList] = useState('')
-  
-    const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
-    const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
+  const [artist, setArtist] = useState<string[]>([""])
+
+  const [place, setPlace] = useState<string>('')
+  const [eventDate, setEventDate] = useState('')
+  const [rating, setRating] = useState(0)
+  const [note, setNote] = useState('')
+  const [songList, setSongList] = useState('')
+
+  const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
+  const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
 
   return (
     <div>
@@ -100,6 +100,11 @@ export default function CreateEventModal({
               setMemoryImageKey={setMemoryImageKey}
               memoryImageUrl={memoryImageUrl}
               setMemoryImageUrl={setMemoryImageUrl}
+              memoryImages={memoryImages}
+        setMemoryImages={setMemoryImages}
+         setSelectedImage={setSelectedImage}
+  isMemoryDeleteOpen={isMemoryDeleteOpen}
+  setIsMemoryDeleteOpen={setIsMemoryDeleteOpen}
             />
           </DialogHeader>
         </DialogContent>
