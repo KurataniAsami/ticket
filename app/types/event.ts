@@ -1,3 +1,5 @@
+import type { Dispatch, SetStateAction } from "react"
+
 // 一覧表示の型
 export type EventList = {
   id: number
@@ -61,4 +63,43 @@ export type MemoryImage = {
   key: string   // DB保存用
   url: string   // 画面表示用
   comment?: string | null
+}
+
+// 作成フォームに入力するpropsの型
+export type EventFormProps = {
+  eventTitle: string
+  setEventTitle: Dispatch<SetStateAction<string>>
+
+  artist: string[]
+  setArtist: Dispatch<SetStateAction<string[]>>
+
+  place: string
+  setPlace: Dispatch<SetStateAction<string>>
+
+  eventDate: string
+  setEventDate: Dispatch<SetStateAction<string>>
+
+  rating: number
+  setRating: Dispatch<SetStateAction<number>>
+
+  note: string
+  setNote: Dispatch<SetStateAction<string>>
+
+  songList: string
+  setSongList: Dispatch<SetStateAction<string>>
+
+  ticketImageKey: string | null
+  setTicketImageKey: Dispatch<SetStateAction<string | null>>
+
+  ticketImageUrl: string | null
+  setTicketImageUrl: Dispatch<SetStateAction<string | null>>
+
+  memoryImageKey: string[]
+  setMemoryImageKey: Dispatch<SetStateAction<string[]>>
+
+  memoryImageUrl: string[]
+  setMemoryImageUrl: Dispatch<SetStateAction<string[]>>
+
+  memoryImages: MemoryImage[]
+  setMemoryImages: Dispatch<SetStateAction<MemoryImage[]>>
 }

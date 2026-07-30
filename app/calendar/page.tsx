@@ -2,18 +2,36 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { EventList } from "../types/event"
+import { EventList, MemoryImage } from "../types/event"
+import { EventFormProps } from "../types/event"
 import { Calendar } from "../components/Calendar"
 import CreateEventModal from "../components/CreateEventModal"
 import { Card,CardContent } from "@/components/ui/card"
 
-export type EventProps = {
+// EventFormProps &で専用の型と追加のpropsを使用できる
+export type EventProps = EventFormProps & {
   events: EventList[]
+
+  artist: string[]
+  setArtist: React.Dispatch<React.SetStateAction<string[]>>
+
+  memoryImages: MemoryImage[]
+  setMemoryImages: React.Dispatch<React.SetStateAction<MemoryImage[]>>
+
+  selectedImage: string | null
+  setSelectedImage: React.Dispatch<React.SetStateAction<string | null>>
+
+  isMemoryDeleteOpen: boolean
+  setIsMemoryDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export default function CalendarPage() {
+export default function CalendarPage({
+}:EventFormProps) {
   const [events, setEvents] = useState<EventList[]>([])
   const [loadins, setLoading] = useState(true)
+
+  const [eventTitle, setEventTitle] = useState('')
+  const [artist, setArtist] = useState<string[]>([""])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -49,12 +67,44 @@ export default function CalendarPage() {
             />
           </CardContent>
         </Card>
-
+{/* ここはどうする？、　専用型を作成した所 */}
         <CreateEventModal
+          artist={artist}
+          setArtist={setArtist}
+
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-        />
 
+          eventTitle={eventTitle}
+          setEventTitle={setEventTitle}
+          place={place}
+          setPlace={setPlace}
+          eventDate={eventDate}
+          setEventDate={setEventDate}
+          rating={rating}
+          setRating={setRating}
+          note={note}
+          setNote={setNote}
+          songList={songList}
+          setSongList={setSongList}
+
+          ticketImageKey={ticketImageKey}
+          setTicketImageKey={setTicketImageKey}
+          ticketImageUrl={ticketImageUrl}
+          setTicketImageUrl={setTicketImageUrl}
+
+          memoryImageKey={memoryImageKey}
+          setMemoryImageKey={setMemoryImageKey}
+          memoryImageUrl={memoryImageUrl}
+          setMemoryImageUrl={setMemoryImageUrl}
+
+          memoryImages={memoryImages}
+          setMemoryImages={setMemoryImages}
+          isMemoryDeleteOpen={isMemoryDeleteOpen}
+          setIsMemoryDeleteOpen={setIsMemoryDeleteOpen}
+          selectedImage={selectedImage}
+          setSelectedImage={setSelectedImage}
+        />
     </div>
   )
 }

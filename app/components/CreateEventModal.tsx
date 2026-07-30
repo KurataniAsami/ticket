@@ -8,6 +8,7 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog"
 import { MemoryImage } from "../types/event"
+import { EventFormProps } from "../types/event"
 
 type EventCreateModalProps = {
   eventTitle: string
@@ -36,6 +37,15 @@ type EventCreateModalProps = {
   memoryImageUrl: string[]
   setMemoryImageUrl: React.Dispatch<React.SetStateAction<string[]>>
 
+  memoryImages: MemoryImage[]
+  setMemoryImages: React.Dispatch<React.SetStateAction<MemoryImage[]>>
+
+  selectedImage: string | null
+  setSelectedImage: React.Dispatch<React.SetStateAction<string | null>>
+
+  isMemoryDeleteOpen: boolean
+  setIsMemoryDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>
+
   textColor?: string   // modal
   SubmitButton?: boolean   // 作成ページのみボタン表示
   editMessage?: string  // editページのみ、テキスト挿入
@@ -52,9 +62,15 @@ export default function CreateEventModal({
   setMemoryImageKey,
   memoryImageUrl,
   setMemoryImageUrl,
+  eventTitle,
+  setEventTitle,
+  memoryImages,
+  setMemoryImages,
+  isMemoryDeleteOpen,
+  setIsMemoryDeleteOpen,
 }: EventCreateModalProps) {
 
-  const [eventTitle, setEventTitle] = useState('')
+  // const [eventTitle, setEventTitle] = useState('')
   const [artist, setArtist] = useState<string[]>([""])
 
   const [place, setPlace] = useState<string>('')
@@ -65,6 +81,7 @@ export default function CreateEventModal({
 
   const [ticketImageKey, setTicketImageKey] = useState<string | null>(null)
   const [ticketImageUrl, setTicketImageUrl] = useState<string | null>(null)
+
 
   return (
     <div>
@@ -101,10 +118,9 @@ export default function CreateEventModal({
               memoryImageUrl={memoryImageUrl}
               setMemoryImageUrl={setMemoryImageUrl}
               memoryImages={memoryImages}
-        setMemoryImages={setMemoryImages}
-         setSelectedImage={setSelectedImage}
-  isMemoryDeleteOpen={isMemoryDeleteOpen}
-  setIsMemoryDeleteOpen={setIsMemoryDeleteOpen}
+              setMemoryImages={setMemoryImages}
+              isMemoryDeleteOpen={isMemoryDeleteOpen}
+              setIsMemoryDeleteOpen={setIsMemoryDeleteOpen}
             />
           </DialogHeader>
         </DialogContent>
