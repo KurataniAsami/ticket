@@ -244,7 +244,8 @@ export default function EventDetailPage() {
               width={400}
               height={200}
               cardWidth="w-[400px]"
-              ShowComment={true}
+              CommnetText={true}
+              CloseButton={false}
             />
           ))}
         </div>
