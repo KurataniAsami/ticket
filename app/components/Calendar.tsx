@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter } from "next/navigation"
-import { EventProps } from "../calendar/page"
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
 
@@ -9,16 +8,18 @@ import dayGridPlugin from "@fullcalendar/daygrid"
 import interactionPlugin from "@fullcalendar/interaction"
 // npm install @fullcalendar/interaction
 import jaLocale from "@fullcalendar/core/locales/ja"
+import { EventList } from "../types/event"
 
-type CalendarProps = EventProps & {
+type CalendarProps = {
   onDateClick: () => void
+  events: EventList[]
 }
 
 export const Calendar = ({
     events,
     onDateClick,
   }: CalendarProps)  => {
-    
+
   const router = useRouter();
 
   const calendarEvents = events.map((event) => ({

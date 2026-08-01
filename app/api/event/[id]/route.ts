@@ -1,5 +1,5 @@
 import { prisma } from "@/app/libs/prisma";
-import { EventDetail } from "@/app/types/event";
+import { EventDetail, MemoryImage } from "@/app/types/event";
 import { NextRequest, NextResponse } from "next/server";
 
 export type EventShowResponse = {
@@ -51,6 +51,7 @@ export type UpdateEventRequestBody = {
   ticketImageKey?: string | null
   memoryImageKey?: string[] | null   // 配列
   artist: string[]
+  memoryImages?: MemoryImage[]
 }
 
 export const PUT = async (
@@ -69,6 +70,7 @@ export const PUT = async (
     rating,
     artist,
     place,
+    memoryImages
   }: UpdateEventRequestBody = await request.json()
 
   try {
@@ -117,12 +119,15 @@ export const PUT = async (
       },
 
       eventImages: {
-      create: (memoryImageKey ?? []).map((key) => ({
-        url: key,
-      })),
-    },
+        deleteMany: {},
+        create: (memoryImages ?? []).map((image) => ({
+          url: image.key,
+          comment: image.comment,
+        })),
+      },
     },
   })
+
   return NextResponse.json({ message: '成功しました'}, { status: 200 })
 } catch(error) {
   if(error instanceof Error) 

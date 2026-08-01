@@ -6,6 +6,7 @@ import { EventList, MemoryImage } from "../types/event"
 import { EventFormProps } from "../types/event"
 import { Calendar } from "../components/Calendar"
 import CreateEventModal from "../components/CreateEventModal"
+import { EventFormProvider } from "../providers/EventFormProvider"
 import { Card,CardContent } from "@/components/ui/card"
 
 // EventFormProps &で専用の型と追加のpropsを使用できる
@@ -30,10 +31,11 @@ export default function CalendarPage({
   const [events, setEvents] = useState<EventList[]>([])
   const [loadins, setLoading] = useState(true)
 
-  const [eventTitle, setEventTitle] = useState('')
-  const [artist, setArtist] = useState<string[]>([""])
-
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   useEffect(() => {
       const getAllEvent = async () => {
@@ -61,50 +63,26 @@ export default function CalendarPage({
 
         <Card className="flex-1 bg-gray-900 text-white">
           <CardContent>
-            <Calendar
-              events={events} 
-              onDateClick={() => setIsModalOpen(true)}
-            />
+            <EventFormProvider>
+              <Calendar
+                events={events} 
+                onDateClick={() => setIsModalOpen(true)}
+              />
+            </EventFormProvider>
           </CardContent>
         </Card>
-{/* ここはどうする？、　専用型を作成した所 */}
-        <CreateEventModal
-          artist={artist}
-          setArtist={setArtist}
 
-          open={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-
-          eventTitle={eventTitle}
-          setEventTitle={setEventTitle}
-          place={place}
-          setPlace={setPlace}
-          eventDate={eventDate}
-          setEventDate={setEventDate}
-          rating={rating}
-          setRating={setRating}
-          note={note}
-          setNote={setNote}
-          songList={songList}
-          setSongList={setSongList}
-
-          ticketImageKey={ticketImageKey}
-          setTicketImageKey={setTicketImageKey}
-          ticketImageUrl={ticketImageUrl}
-          setTicketImageUrl={setTicketImageUrl}
-
-          memoryImageKey={memoryImageKey}
-          setMemoryImageKey={setMemoryImageKey}
-          memoryImageUrl={memoryImageUrl}
-          setMemoryImageUrl={setMemoryImageUrl}
-
-          memoryImages={memoryImages}
-          setMemoryImages={setMemoryImages}
-          isMemoryDeleteOpen={isMemoryDeleteOpen}
-          setIsMemoryDeleteOpen={setIsMemoryDeleteOpen}
-          selectedImage={selectedImage}
-          setSelectedImage={setSelectedImage}
-        />
+        <EventFormProvider>
+          <CreateEventModal
+            isMemoryDeleteOpen={isMemoryDeleteOpen}
+            setIsMemoryDeleteOpen={setIsMemoryDeleteOpen}
+            selectedImage={selectedImage}
+            setSelectedImage={setSelectedImage}
+            open={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+          />
+        </EventFormProvider>
     </div>
   )
 }
+

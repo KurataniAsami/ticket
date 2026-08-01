@@ -85,6 +85,7 @@ export default function EventDetailPage() {
 
       return {
         id: image.id,
+        key: image.url,
         url: publicUrl,
         comment: image.comment
       }
@@ -253,6 +254,3 @@ export default function EventDetailPage() {
     </div>
   )
 }
-// 画像添付　import CameraAltIcon from '@mui/icons-material/CameraAlt';
-// note import ModeEditIcon from '@mui/icons-material/ModeEdit';
-// 評価機能（★５段階）、実装検討, フォームはカメラアイコン

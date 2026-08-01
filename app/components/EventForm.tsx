@@ -1,51 +1,30 @@
 'use client'
 
 import { ChangeEvent, useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { supabase } from "@/app/libs/supabase"
 import { v4 as uuidv4 } from 'uuid'  // ticketImageKeyを一意に作成
 
-import { CreateEventRequestBody } from "@/app/api/event/route"
 import { MemoryImage } from "../types/event"
 
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import StarRateIcon from '@mui/icons-material/StarRate';
-import TicketImage from "@/app/components/TicketImage"
 import TicketImageModal from "./TicketImageModal"
-
-import AddIcon from '@mui/icons-material/Add';
+import TicketImage from "@/app/components/TicketImage"
 import MemoryImageCard from "./MemoryImageCard"
 import MemoryImageModal from "./MemoryImageModal"
 import MemoryDeleteModal from "./MemoryDeleteModal"
 
+import { useEventFormContext } from "@/contexts/EventFormContext"
+
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import StarRateIcon from '@mui/icons-material/StarRate';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteModal from "./DeleteModal"
+
 type EventFormProps = {
-  eventTitle: string
-  setEventTitle: React.Dispatch<React.SetStateAction<string>>
-  artist: string[]
-  setArtist: React.Dispatch<React.SetStateAction<string[]>>
-  place: string
-  setPlace: React.Dispatch<React.SetStateAction<string>>
-  eventDate: string
-  setEventDate: React.Dispatch<React.SetStateAction<string>>
-  rating: number
-  setRating: React.Dispatch<React.SetStateAction<number>>
-  note: string
-  setNote: React.Dispatch<React.SetStateAction<string>>
-  songList: string
-  setSongList: React.Dispatch<React.SetStateAction<string>>
-
-  // 1枚しか扱わない場合はstring | null
-  ticketImageKey: string | null
-  setTicketImageKey: React.Dispatch<React.SetStateAction<string | null>>
-  ticketImageUrl: string | null
-  setTicketImageUrl: React.Dispatch<React.SetStateAction<string | null>>
-
-  memoryImageKey: string[]
-  setMemoryImageKey: React.Dispatch<React.SetStateAction<string[]>>
-  memoryImageUrl: string[]
-  setMemoryImageUrl: React.Dispatch<React.SetStateAction<string[]>>
   memoryImages: MemoryImage[]
   setMemoryImages: React.Dispatch<React.SetStateAction<MemoryImage[]>>
+
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
+  // handleCreateSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>
 
   // 選択した思い出画像のみモーダル
   selectedImage: string | null
@@ -54,6 +33,7 @@ type EventFormProps = {
   isMemoryDeleteOpen: boolean
   setIsMemoryDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>
 
+  // 表示
   textColor?: string   // modal
   SubmitButton?: boolean   // 作成ページのみボタン表示
   editMessage?: string  // editページのみ、テキスト挿入
@@ -63,42 +43,40 @@ type EventFormProps = {
 }
 
 export default function EventForm({
-  eventTitle,
-  setEventTitle,
-  place,
-  setPlace,
-  eventDate,
-  setEventDate,
-  rating = 0,
-  setRating,
-  note = '',
-  setNote,
-  songList = '',
-  setSongList,
-  artist,
-  setArtist,
-  ticketImageKey,
-  setTicketImageKey,
-  memoryImageKey,
-  setMemoryImageKey,
-  ticketImageUrl,
-  setTicketImageUrl,
-  setMemoryImageUrl,
-  memoryImages,  
-  setMemoryImages,
-  selectedImage,
-  setSelectedImage,
+  // Contextじゃない物
   textColor = "text-white",  // modal
   SubmitButton,   // 作成ページのみボタン表示
   editMessage,  // editページのみ、テキスト挿入
+  selectedImage,
+  setSelectedImage,
+  onSubmit,
 }: EventFormProps) {
-  const router = useRouter()
 
-  // page.tsxの方からstateを受け取っているのでstateは削除
-  
-
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const {
+    place,
+    setPlace,
+    eventDate,
+    setEventDate,
+    rating = 0,
+    setRating,
+    note = '',
+    setNote,
+    songList = '',
+    setSongList,
+    artist,
+    setArtist,
+    ticketImageKey,
+    setTicketImageKey,
+    ticketImageUrl,
+    setTicketImageUrl,
+    eventTitle,
+    setEventTitle,
+    memoryImages,
+    setMemoryImages,
+    memoryImageKey,
+    setMemoryImageKey,
+    setMemoryImageUrl,
+} = useEventFormContext()
 
   // モーダル
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false)
@@ -108,38 +86,8 @@ export default function EventForm({
   const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
   const [deleteImageId, setDeleteImageId] = useState<number | null>(null)
 
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault()
-
-    setLoading(true)
-
-    const body: CreateEventRequestBody = {
-      eventTitle,  
-      artist,
-      eventDate,
-      rating,
-      note,
-      songList,
-      place,
-      ticketImageKey: ticketImageKey ?? undefined,   // 画像なしの場合はnullで保存
-      memoryImageKey: memoryImageKey,
-      memoryImages  // コメント
-    }
-
-    try {
-      const res = await fetch(`/api/event`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      })
-
-      router.push("/")
-    } catch(error) {
-      setError(error instanceof Error ? error.message: 'イベントを登録できませんでした')
-    } finally {
-      setLoading(false)
-    }
-  }
+  // 削除
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   // チケット画像のアップロード
   const handleTicketImage = async (
@@ -290,7 +238,7 @@ export default function EventForm({
   return (
     <div className="mt-5 min-w-0 mr-5">
       <div className="flex justify-center mt-3">
-        <form onSubmit={handleSubmit}
+        <form onSubmit={onSubmit}
           className="w-full max-w-xl min-w-0"
         >
           <div className="flex flex-col">
@@ -476,14 +424,13 @@ export default function EventForm({
                     onClick={() => {
                       setSelectedImage(image.url)
                       setIsMemoryModalOpen(true)
-                      
                     }}
 
                     onCommentChange={(value) =>
                       handleCommentChange(image.id, value)
                     }
 
-                    // inDeleteは発火場所
+                    // onDeleteは発火場所
                     onDelete={() => handleDeleteClick(image.id)}
                   />
                 </div>
@@ -515,6 +462,12 @@ export default function EventForm({
             </button>
           </div>
           )}
+
+          <DeleteModal
+            open={isDeleteOpen}
+            onClose={() => setIsDeleteOpen(false)}
+            onDelete={handleMemoryDelete}
+          />
         </form>
       </div>
     </div>

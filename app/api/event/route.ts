@@ -1,5 +1,5 @@
 import { prisma } from "@/app/libs/prisma"
-import { EventList } from "@/app/types/event"
+import { EventList, MemoryImage } from "@/app/types/event"
 import { NextRequest, NextResponse } from "next/server"
 
 export type EventIndexResponse = {
@@ -18,6 +18,7 @@ export type CreateEventRequestBody = {
   ticketImageKey?: string
   memoryImageKey?: string[]
   artist: string[]
+  memoryImages?: MemoryImage[]
 }
 
 export const GET = async (request: NextRequest) => {
@@ -49,7 +50,7 @@ export const GET = async (request: NextRequest) => {
 export const POST = async (request: NextRequest) => {
   try {
     const body : CreateEventRequestBody = await request.json()
-    const { eventTitle, place, eventDate, rating, note, songList, ticketImageKey, memoryImageKey } = body
+    const { eventTitle, place, eventDate, rating, note, songList, ticketImageKey, memoryImages } = body
     const { artist: artistNames = [] } = body
 
     // 同じplaceがなければ作成(同一の会場でもレコードが重複しないようにする)
@@ -102,11 +103,11 @@ export const POST = async (request: NextRequest) => {
         },
 
         eventImages: {
-          create: (memoryImageKey ?? []).map((key) => ({
-            url: key,
+          create: (memoryImages ?? []).map((image) => ({
+            url: image.key,
+            comment: image.comment,
           })),
         },
-        
       },
     })
 
