@@ -5,17 +5,10 @@ import { useRouter } from "next/navigation"
 import EventForm from "./EventForm"
 import { useEventFormContext } from "@/contexts/EventFormContext"
 import { CreateEventRequestBody } from "@/app/api/event/route"
+import { EventFormData } from "../types/event"
 
 export default function EventCreateContent() {
-
-  const router = useRouter()
-
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
-
-  // 思い出画像削除モーダル
-  const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
-
-  const [loading, setLoading] = useState(false)
+const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
 
@@ -35,22 +28,20 @@ export default function EventCreateContent() {
 
   // 作成処理
   const handleCreateSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
+    data: EventFormData   // 型
   ) => {
 
-    e.preventDefault()
-
     const body: CreateEventRequestBody = {
-      eventTitle,
-      artist,
-      place,
-      eventDate,
-      rating,
-      note,
-      songList,
-      ticketImageKey: ticketImageKey ?? undefined,
-      memoryImageKey,
-      memoryImages
+      eventTitle: data.eventTitle,
+      artist: data.artist,
+      place: data.place,
+      eventDate: data.eventDate,
+      rating: data.rating,
+      note: data.note,
+      songList: data.songList,
+      ticketImageKey: data.ticketImageKey,
+      memoryImageKey: data.memoryImageKey,
+      memoryImages: data.memoryImages
     }
 
     try {
@@ -89,3 +80,11 @@ export default function EventCreateContent() {
     </div>
   )
 }
+  const router = useRouter()
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  // 思い出画像削除モーダル
+  const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
+
+  
