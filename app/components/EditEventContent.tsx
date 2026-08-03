@@ -6,7 +6,7 @@ import { supabase } from "@/app/libs/supabase"
 
 import { UpdateEventRequestBody } from "@/app/api/event/[id]/route"
 
-import { EventDetail } from "@/app/types/event"
+import { EventDetail, EventFormData } from "@/app/types/event"
 import EventForm from "@/app/components/EventForm"
 import DeleteModal from "./DeleteModal"
 
@@ -103,8 +103,7 @@ export default function EditEventContent() {
   }, [event])
 
   // 更新処理, handleSubmitをpropsで送る
-  const handleSubmit = async (e: { preventDefault: () => void }) => {
-    e.preventDefault()
+  const handleSubmit = async (data: EventFormData) => {
     const body: UpdateEventRequestBody = {
       eventTitle,
       artist,

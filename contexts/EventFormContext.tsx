@@ -4,7 +4,7 @@ import { MemoryImage } from "@/app/types/event"
 import { createContext, useContext } from "react"
 import type { Dispatch, SetStateAction } from "react"
 
-type EventFormContextType = {
+export type EventFormContextType = {
   eventTitle: string
   setEventTitle: Dispatch<SetStateAction<string>>
 

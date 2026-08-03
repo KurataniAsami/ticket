@@ -8,9 +8,15 @@ import { CreateEventRequestBody } from "@/app/api/event/route"
 import { EventFormData } from "../types/event"
 
 export default function EventCreateContent() {
-const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
+
+  // 思い出画像削除モーダル
+  const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
+
+  const router = useRouter()
 
   const {
     eventTitle,
@@ -30,7 +36,7 @@ const [loading, setLoading] = useState(false)
   const handleCreateSubmit = async (
     data: EventFormData   // 型
   ) => {
-
+ console.log("送信データ:", data)
     const body: CreateEventRequestBody = {
       eventTitle: data.eventTitle,
       artist: data.artist,
@@ -80,11 +86,6 @@ const [loading, setLoading] = useState(false)
     </div>
   )
 }
-  const router = useRouter()
-
-  const [selectedImage, setSelectedImage] = useState<string | null>(null)
-
-  // 思い出画像削除モーダル
-  const [isMemoryDeleteOpen, setIsMemoryDeleteOpen] = useState(false)
+  
 
   

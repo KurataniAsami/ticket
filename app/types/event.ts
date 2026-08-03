@@ -103,3 +103,19 @@ export type EventFormProps = {
   memoryImages: MemoryImage[]
   setMemoryImages: Dispatch<SetStateAction<MemoryImage[]>>
 }
+
+// react-hook-form用の型
+export type EventFormData = {
+  eventTitle?: string
+  artist: string[]
+  place: string
+  eventDate: string
+  rating?: number
+  note?: string
+  songList?: string
+
+  ticketImageKey?: string
+
+  memoryImageKey?: string[]
+  memoryImages: MemoryImage[]
+}

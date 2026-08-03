@@ -3,8 +3,9 @@
 import { ChangeEvent, useEffect, useState } from "react"
 import { supabase } from "@/app/libs/supabase"
 import { v4 as uuidv4 } from 'uuid'  // ticketImageKeyを一意に作成
+import { useForm } from "react-hook-form"
 
-import { MemoryImage } from "../types/event"
+import { EventFormData, MemoryImage } from "../types/event"
 
 import TicketImageModal from "./TicketImageModal"
 import TicketImage from "@/app/components/TicketImage"
@@ -23,8 +24,8 @@ type EventFormProps = {
   memoryImages: MemoryImage[]
   setMemoryImages: React.Dispatch<React.SetStateAction<MemoryImage[]>>
 
-  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => Promise<void>
-  // handleCreateSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>
+  // rfh
+  onSubmit: (data: EventFormData) => Promise<void>
 
   // 選択した思い出画像のみモーダル
   selectedImage: string | null
@@ -46,17 +47,14 @@ export default function EventForm({
   // Contextじゃない物
   textColor = "text-white",  // modal
   SubmitButton,   // 作成ページのみボタン表示
-  editMessage,  // editページのみ、テキスト挿入
+  editMessage,    // editページのみ、テキスト挿入
   selectedImage,
   setSelectedImage,
   onSubmit,
 }: EventFormProps) {
 
   const {
-    place,
-    setPlace,
-    eventDate,
-    setEventDate,
+    // rhfで扱っているプロパティは削除
     rating = 0,
     setRating,
     note = '',
@@ -235,10 +233,19 @@ export default function EventForm({
     setDeleteImageId(null)
   }
 
+  // react-hook-form
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<EventFormData>({
+    mode: "onBlur",
+  });
+
   return (
     <div className="mt-5 min-w-0 mr-5">
       <div className="flex justify-center mt-3">
-        <form onSubmit={onSubmit}
+        <form onSubmit={handleSubmit(onSubmit)}
           className="w-full max-w-xl min-w-0"
         >
           <div className="flex flex-col">
@@ -247,10 +254,12 @@ export default function EventForm({
             </label>
             <input
               type="date"   // dateにすると自動的にカレンダーを表示してくれる
-              value={eventDate}
-              onChange={(e) => setEventDate(e.target.value)}
+              // value={eventDate}
+              // onChange={(e) => setEventDate(e.target.value)}
+              {...register("eventDate", { required: "日付を入力してください"})}
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
+            <p className="text-red-500">{errors.eventDate?.message}</p>
           </div>
 
           <div className="flex flex-col mt-5">
@@ -292,11 +301,13 @@ export default function EventForm({
             </label>
             <input
               type="text"
-              value={place}
-              onChange={(e) => setPlace(e.target.value)}
+              // value={place}
+              {...register("place", { required: "会場を入力してください"})}
+              // onChange={(e) => setPlace(e.target.value)}
               placeholder="例: 幕張メッセ"
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
+            <p className="text-red-500">{errors.place?.message}</p>
           </div>
 
           <div className="flex flex-col mt-5">
@@ -307,6 +318,7 @@ export default function EventForm({
               type="text"
               value={eventTitle}
               onChange={(e) => setEventTitle(e.target.value)}
+              // {...register("eventTitle")}
               placeholder="例: SUMMER TOUR 2026"
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
@@ -354,6 +366,7 @@ export default function EventForm({
             <textarea
               value={songList}
               onChange={(e) => setSongList(e.target.value)}
+              // {...register("songList")}
               placeholder="セットリストを入力（任意）"
               className="bg-slate-900 border border-gray-600 rounded p-1.5 focus:outline focus:outline-green-400"
             />
